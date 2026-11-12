@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Samuel Au</title>
+    <title>Minimalist Photography Portfolio | Photo Collage</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -67,7 +67,7 @@
     <!-- TOP HEADER WITH RIGHT ALIGNED HEADLINE -->
     <header class="max-w-[1920px] mx-auto flex justify-end items-center mb-4 sm:mb-6 lg:mb-8">
         <!-- Double size Consolas font allowing lower & mixed-case -->
-        <h1 class="text-2xl sm:text-3xl font-medium tracking-normal text-zinc-900 font-mono">samuel au</h1>
+        <h1 class="text-2xl sm:text-3xl font-medium tracking-normal text-zinc-900 font-mono">Portfolio</h1>
     </header>
 
 
@@ -146,115 +146,132 @@
          */
         const photos = [
             {
+                id: 16,
+                src: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1000&q=80",
+                alt: "Coastline Sunset",
+                date: "2026.11.12",
+                camera: "Fujifilm X100VI",
+                settings: "23mm · f/2.0 · 1/500s · ISO 160"
+            },
+            {
+                id: 15,
+                src: "https://images.unsplash.com/photo-1552832230-c0197dd311b5?auto=format&fit=crop&w=1000&q=80",
+                alt: "Ancient Architecture",
+                date: "2026.10.28",
+                camera: "Leica M11",
+                settings: "35mm · f/1.4 · 1/1000s · ISO 100"
+            },
+            {
                 id: 14,
-                src: "images/DSCF8275 (3).jpg",
-                thumb: "images/DSCF8275 (3).jpg",
-                date: "2026.11.09",
-                camera: "X100V",
-                settings: "ISO 800 · f/8.0 · 1/250s"
+                src: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=1000&q=80",
+                alt: "Forest Canopy",
+                date: "2026.09.15",
+                camera: "Sony Alpha A7 IV",
+                settings: '24mm · f/8.0 · 15" · ISO 100'
             },
             {
                 id: 13,
-                src: "images/DSCF8639.jpg",
-                thumb: "images/DSCF8639.jpg",
-                date: "2026.11.09",
-                camera: "X100V",
-                settings: "ISO 5000 · f/8.0 · 1/60s"
+                src: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1000&q=80",
+                alt: "Urban Glass Facade",
+                date: "2026.08.04",
+                camera: "Canon EOS R5",
+                settings: "24mm · f/4.0 · 1/800s · ISO 400"
             },
             {
                 id: 12,
-                src: "images/DSCF8539.jpg",
-                thumb: "images/DSCF8539.jpg",
-                date: "2026.11.09",
-                camera: "X100V",
-                settings: "ISO 160 · f/3.2 · 1/4s"
-            },{
+                src: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1000&q=80",
+                alt: "Long Exposure Sea Rocks",
+                date: "2026.07.21",
+                camera: "Ricoh GR III",
+                settings: '18.3mm · f/5.6 · 2.5" · ISO 200'
+            },
+            {
                 id: 11,
-                src: "images/DSCF5177.jpg",
-                thumb: "images/DSCF5177.jpg",
-                date: "2026.08.04",
-                camera: "X100V",
-                settings: "ISO 1600 · f/4.0 · 1/340s"
+                src: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1000&q=80",
+                alt: "Alpine Mountain Peaks",
+                date: "2026.06.30",
+                camera: "Nikon Z6 II",
+                settings: "85mm · f/1.8 · 1/4000s · ISO 100"
             },
             {
                 id: 10,
-                src: "images/20261024_173313.jpg",
-                thumb: "images/20261024_173313.jpg",
-                date: "2026.10.24",
-                camera: "Galaxy S24+",
-                settings: "IS0 800 · f/1.8 · 1/100s"
+                src: "https://images.unsplash.com/photo-1477959858617-67f30ac4ce78?auto=format&fit=crop&w=1000&q=80",
+                alt: "City Night Lights",
+                date: "2026.05.18",
+                camera: "Fujifilm X-T5",
+                settings: "16mm · f/5.6 · 1/125s · ISO 160"
             },
             {
                 id: 9,
-                src: "images/DSC05889.jpg",
-                thumb: "images/DSC05889.jpg",
-                date: "2026.10.02",
-                camera: "DSC-RX10M4",
-                settings: "ISO 800 · f/4.5 · 1/1600s"
+                src: "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1000&q=80",
+                alt: "Misty Pine Forest",
+                date: "2026.04.10",
+                camera: "Hasselblad X2D 100C",
+                settings: "38mm · f/2.5 · 1/60s · ISO 64"
             },
             {
                 id: 8,
-                src: "images/DSCF6871.jpg",
-                thumb: "images/DSCF6871.jpg",
-                date: "2026.08.24",
-                camera: "X100v",
-                settings: "IS0 160 · f/8.0 · 1/45s"
+                src: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=1000&q=80",
+                alt: "Mountain Valley Mist",
+                date: "2026.03.22",
+                camera: "Fujifilm X100V",
+                settings: "23mm · f/2.0 · 1/1000s · ISO 320"
             },
             {
                 id: 7,
-                src: "images/DSCF6109.jpg",
-                thumb: "images/DSCF6109.jpg",
-                date: "2026.08.07",
-                camera: "X100V",
-                settings: "ISO 200 · f/5.6 · 1/500s"
+                src: "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1000&q=80",
+                alt: "Interior Shadow Study",
+                date: "2026.02.14",
+                camera: "Sony A7R V",
+                settings: "35mm · f/2.8 · 1/160s · ISO 800"
             },
             {
                 id: 6,
-                src: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=1200&auto=format&fit=crop",
-                thumb: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=600&auto=format&fit=crop",
-                date: "2026.08.07",
-                camera: "X100V",
-                settings: "IS0 200 · f/5.0 · 1/2000s"
+                src: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=1000&q=80",
+                alt: "Editorial Portrait",
+                date: "2026.01.05",
+                camera: "Leica Q3",
+                settings: "28mm · f/1.7 · 1/2000s · ISO 100"
             },
             {
                 id: 5,
-                src: "images/DSCF5652.jpg",
-                thumb: "images/DSCF5652.jpg",
-                date: "2026.08.05",
-                camera: "X100V",
-                settings: "IS0 400 · f/8.0 · 1/1000s"
+                src: "https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=1000&q=80",
+                alt: "Autumn Woodland Path",
+                date: "2025.12.19",
+                camera: "Canon EOS R6 Mark II",
+                settings: "70mm · f/2.8 · 1/400s · ISO 160"
             },
             {
                 id: 4,
-                src: "images/DSCF5745.jpg",
-                thumb: "5745",
-                date: "2026.08.05",
-                camera: "X100V",
-                settings: "ISO 160 · f/2.0 · 1/2000s"
+                src: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=1000&q=80",
+                alt: "Monochrome Portrait",
+                date: "2025.11.08",
+                camera: "Fujifilm Pro3",
+                settings: "35mm · f/1.4 · 1/500s · ISO 200"
             },
             {
                 id: 3,
-                src: "images/DSCF5170.jpg",
-                thumb: "images/DSCF5170.jpg",
-                date: "2026.08.03",
-                camera: "X100V",
-                settings: "IS0 320 · f/2.8 · 1\""
+                src: "https://images.unsplash.com/photo-1426604966848-d7adac402bff?auto=format&fit=crop&w=1000&q=80",
+                alt: "Valley Sunrise",
+                date: "2025.10.12",
+                camera: "Sony FX3",
+                settings: "24mm · f/2.0 · 1/250s · ISO 400"
             },
             {
                 id: 2,
-                src: "images/DSCF4376.jpg",
-                thumb: "images/DSCF4376.jpg",
-                date: "2026.08.02",
-                camera: "X100V",
-                settings: "IS0 1600 · f/5.6 · 1/500s"
+                src: "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1000&q=80",
+                alt: "Starry Mountain Night",
+                date: "2025.09.01",
+                camera: "Nikon Zf",
+                settings: "40mm · f/2.0 · 1/1250s · ISO 100"
             },
             {
                 id: 1,
-                src: "images/DSCF4376.jpg",
-                thumb: "images/DSCF4376.jpg",
-                date: "2026.08.02",
-                camera: "X100V",
-                settings: ISO 640 · f/5.6 · 1/250s"
+                src: "https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=1000&q=80",
+                alt: "Tokyo Street Rain",
+                date: "2025.08.20",
+                camera: "Ricoh GR IIIx",
+                settings: "26.1mm · f/2.8 · 1/160s · ISO 200"
             }
         ];
 
