@@ -83,8 +83,8 @@
         <!-- Lightbox Main Stage (Image + Arrow Buttons) -->
         <div id="lightbox-stage" class="relative flex-1 flex items-center justify-center my-4 overflow-hidden">
            
-            <!-- Previous Button -->
-            <button id="lightbox-prev" class="absolute left-2 sm:left-4 z-20 p-3 text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100/80 rounded-full transition-all duration-150 focus:outline-none backdrop-blur-sm" title="Previous Image (Left Arrow)">
+            <!-- Previous Button (Hidden on vertical/portrait screens so image stays unobstructed; swipe still works) -->
+            <button id="lightbox-prev" class="hidden landscape:block absolute left-2 sm:left-4 z-20 p-3 text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100/80 rounded-full transition-all duration-150 focus:outline-none backdrop-blur-sm" title="Previous Image (Left Arrow)">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7"></path>
                 </svg>
@@ -95,8 +95,8 @@
                 <img id="lightbox-img" src="" alt="" class="max-w-full max-h-[85vh] object-contain shadow-xl opacity-0 transition-opacity duration-150 cursor-default" />
             </div>
 
-            <!-- Next Button -->
-            <button id="lightbox-next" class="absolute right-2 sm:right-4 z-20 p-3 text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100/80 rounded-full transition-all duration-150 focus:outline-none backdrop-blur-sm" title="Next Image (Right Arrow)">
+            <!-- Next Button (Hidden on vertical/portrait screens so image stays unobstructed; swipe still works) -->
+            <button id="lightbox-next" class="hidden landscape:block absolute right-2 sm:right-4 z-20 p-3 text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100/80 rounded-full transition-all duration-150 focus:outline-none backdrop-blur-sm" title="Next Image (Right Arrow)">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"></path>
                 </svg>
@@ -394,7 +394,7 @@
 
             setTimeout(() => {
                 lightboxImg.src = photo.src;
-                lightboxImg.alt = photo.alt || 'Portfolio Photograph';
+                lightboxImg.alt = photo.alt || 'image';
                
                 lightboxImg.onerror = function() {
                     this.onerror = null;
