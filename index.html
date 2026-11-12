@@ -12,6 +12,7 @@
                 extend: {
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
+                        mono: ['Consolas', 'Courier New', 'monospace'],
                     }
                 }
             }
@@ -61,7 +62,7 @@
 
     <!-- TOP HEADER WITH RIGHT ALIGNED HEADLINE -->
     <header class="max-w-[1920px] mx-auto flex justify-end items-center mb-4 sm:mb-6 lg:mb-8">
-        <h1 class="text-xs sm:text-sm font-medium tracking-[0.3em] uppercase text-zinc-900">PORTFOLIO</h1>
+        <h1 class="text-xs sm:text-sm font-medium tracking-[0.3em] uppercase text-zinc-900 font-mono">Samuel Au</h1>
     </header>
 
     <!-- MAIN CONTAINER - Pure Photo Collage Grid -->
@@ -73,13 +74,13 @@
     </main>
 
     <!-- LIGHTBOX MODAL OVERLAY -->
-    <div id="lightbox" class="fixed inset-0 z-50 bg-white/95 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-300 flex flex-col justify-between p-4 sm:p-6 select-none cursor-pointer" aria-hidden="true" role="dialog">
+    <div id="lightbox" class="fixed inset-0 z-50 bg-white/95 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-150 flex flex-col justify-between p-4 sm:p-6 select-none cursor-pointer" aria-hidden="true" role="dialog">
         
         <!-- Lightbox Top Navigation Bar -->
         <div class="flex justify-end items-center z-10 w-full pointer-events-auto">
             <!-- Close Button -->
-            <button id="lightbox-close" class="p-2 hover:text-zinc-900 focus:outline-none transition-colors text-zinc-500 group" title="Close (Esc)">
-                <svg class="w-6 h-6 transform group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <button id="lightbox-close" class="p-2 hover:text-zinc-900 focus:outline-none transition-colors duration-150 text-zinc-500 group" title="Close (Esc)">
+                <svg class="w-6 h-6 transform group-hover:scale-110 transition-transform duration-150" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12"></path>
                 </svg>
             </button>
@@ -89,7 +90,7 @@
         <div id="lightbox-stage" class="relative flex-1 flex items-center justify-center my-4 overflow-hidden">
             
             <!-- Previous Button -->
-            <button id="lightbox-prev" class="absolute left-2 sm:left-4 z-20 p-3 text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100/80 rounded-full transition-all focus:outline-none backdrop-blur-sm pointer-events-auto" title="Previous Image (Left Arrow)">
+            <button id="lightbox-prev" class="absolute left-2 sm:left-4 z-20 p-3 text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100/80 rounded-full transition-all duration-150 focus:outline-none backdrop-blur-sm pointer-events-auto" title="Previous Image (Left Arrow)">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7"></path>
                 </svg>
@@ -97,11 +98,11 @@
 
             <!-- Active Lightbox Photo Container -->
             <div class="relative max-w-full max-h-full flex items-center justify-center pointer-events-auto">
-                <img id="lightbox-img" src="" alt="" class="max-w-full max-h-[82vh] object-contain shadow-xl opacity-0 transition-opacity duration-300 cursor-default" />
+                <img id="lightbox-img" src="" alt="" class="max-w-full max-h-[82vh] object-contain shadow-xl opacity-0 transition-opacity duration-150 cursor-default" />
             </div>
 
             <!-- Next Button -->
-            <button id="lightbox-next" class="absolute right-2 sm:right-4 z-20 p-3 text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100/80 rounded-full transition-all focus:outline-none backdrop-blur-sm pointer-events-auto" title="Next Image (Right Arrow)">
+            <button id="lightbox-next" class="absolute right-2 sm:right-4 z-20 p-3 text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100/80 rounded-full transition-all duration-150 focus:outline-none backdrop-blur-sm pointer-events-auto" title="Next Image (Right Arrow)">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"></path>
                 </svg>
@@ -223,14 +224,14 @@
             
             photos.forEach((photo, index) => {
                 const itemWrapper = document.createElement('div');
-                itemWrapper.className = 'masonry-item relative group overflow-hidden bg-zinc-100 cursor-pointer transition-transform duration-300';
+                itemWrapper.className = 'masonry-item relative group overflow-hidden bg-zinc-100 cursor-pointer transition-transform duration-150';
                 
                 // Image element with lazy loading & hover transition
                 const img = document.createElement('img');
                 img.src = photo.thumb;
                 img.alt = `Photo ${index + 1}`;
                 img.loading = "lazy";
-                img.className = 'w-full h-auto object-cover transform transition-all duration-700 ease-out group-hover:scale-[1.02] group-hover:opacity-95';
+                img.className = 'w-full h-auto object-cover transform transition-all duration-150 ease-out group-hover:scale-[1.02] group-hover:opacity-95';
 
                 // Image load error fallback
                 img.onerror = function() {
@@ -267,7 +268,7 @@
             
             setTimeout(() => {
                 lightboxImg.src = '';
-            }, 300);
+            }, 150);
         }
 
         function updateLightboxContent() {
@@ -283,7 +284,7 @@
                 lightboxImg.onload = () => {
                     lightboxImg.classList.remove('opacity-0');
                 };
-            }, 150);
+            }, 50);
         }
 
         function showNextPhoto() {
