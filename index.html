@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Portfolio</title>
+    <title>New Portfolio</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -70,7 +70,7 @@
     <div id="lightbox" class="fixed inset-0 z-50 bg-white/95 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-150 flex flex-col justify-between p-4 sm:p-6 select-none cursor-pointer" aria-hidden="true" role="dialog">
        
         <!-- Lightbox Top Navigation Bar -->
-        <div class="flex justify-end items-center z-10 w-full pointer-events-auto">
+        <div id="lightbox-topbar" class="flex justify-end items-center z-10 w-full pointer-events-none">
             <button id="lightbox-close" class="p-2 hover:text-zinc-900 focus:outline-none transition-colors duration-150 text-zinc-500 group" title="Close (Esc)">
                 <svg class="w-6 h-6 transform group-hover:scale-110 transition-transform duration-150" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12"></path>
@@ -82,14 +82,14 @@
         <div id="lightbox-stage" class="relative flex-1 flex items-center justify-center my-4 overflow-hidden">
            
             <!-- Previous Button -->
-            <button id="lightbox-prev" class="absolute left-2 sm:left-4 z-20 p-3 text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100/80 rounded-full transition-all duration-150 focus:outline-none backdrop-blur-sm pointer-events-auto" title="Previous Image (Left Arrow)">
+            <button id="lightbox-prev" class="absolute left-2 sm:left-4 z-20 p-3 text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100/80 rounded-full transition-all duration-150 focus:outline-none backdrop-blur-sm" title="Previous Image (Left Arrow)">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7"></path>
                 </svg>
             </button>
 
             <!-- Active Lightbox Photo + Metadata Card -->
-            <div id="lightbox-card" class="relative max-w-full max-h-full flex flex-col items-center justify-center pointer-events-auto select-text cursor-default">
+            <div id="lightbox-card" class="relative max-w-full max-h-full flex flex-col items-center justify-center select-text cursor-default">
                 <img id="lightbox-img" src="" alt="" class="max-w-full max-h-[76vh] object-contain shadow-xl opacity-0 transition-opacity duration-150 cursor-default" />
                 <!-- Full EXIF Metadata display directly below photo (date · camera · settings) -->
                 <div id="lightbox-meta" class="mt-3 font-mono text-xs sm:text-sm text-zinc-600 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 opacity-0 transition-opacity duration-150 cursor-default select-text">
@@ -98,7 +98,7 @@
             </div>
 
             <!-- Next Button -->
-            <button id="lightbox-next" class="absolute right-2 sm:right-4 z-20 p-3 text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100/80 rounded-full transition-all duration-150 focus:outline-none backdrop-blur-sm pointer-events-auto" title="Next Image (Right Arrow)">
+            <button id="lightbox-next" class="absolute right-2 sm:right-4 z-20 p-3 text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100/80 rounded-full transition-all duration-150 focus:outline-none backdrop-blur-sm" title="Next Image (Right Arrow)">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"></path>
                 </svg>
@@ -226,6 +226,7 @@
         // DOM Elements
         const galleryGrid = document.getElementById('gallery-grid');
         const lightbox = document.getElementById('lightbox');
+        const lightboxTopbar = document.getElementById('lightbox-topbar');
         const lightboxImg = document.getElementById('lightbox-img');
         const lightboxMeta = document.getElementById('lightbox-meta');
         const lightboxClose = document.getElementById('lightbox-close');
@@ -392,6 +393,13 @@
             lightbox.classList.remove('opacity-0', 'pointer-events-none');
             lightbox.classList.add('opacity-100', 'pointer-events-auto');
             lightbox.setAttribute('aria-hidden', 'false');
+
+            // Enable pointer events on interactive child elements only while modal is open
+            [lightboxTopbar, lightboxPrev, lightboxNext, lightboxCard].forEach(el => {
+                el.classList.remove('pointer-events-none');
+                el.classList.add('pointer-events-auto');
+            });
+
             document.body.classList.add('modal-open');
         }
 
@@ -399,6 +407,13 @@
             lightbox.classList.remove('opacity-100', 'pointer-events-auto');
             lightbox.classList.add('opacity-0', 'pointer-events-none');
             lightbox.setAttribute('aria-hidden', 'true');
+
+            // Explicitly disable pointer events on child elements so hidden overlay never intercepts clicks
+            [lightboxTopbar, lightboxPrev, lightboxNext, lightboxCard].forEach(el => {
+                el.classList.remove('pointer-events-auto');
+                el.classList.add('pointer-events-none');
+            });
+
             document.body.classList.remove('modal-open');
         }
 
