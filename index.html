@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>update</title>
+    <title>Minimalist Photography Portfolio | Photo Collage</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -23,13 +23,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
-        /* Custom Masonry Column Break Rules */
-        .masonry-item {
-            break-inside: avoid;
-            -webkit-column-break-inside: avoid;
-            page-break-inside: avoid;
-        }
-
         /* Prevent image context highlighting & smooth rendering */
         img {
             -webkit-user-select: none;
@@ -62,15 +55,14 @@
 
     <!-- TOP HEADER WITH RIGHT ALIGNED HEADLINE -->
     <header class="max-w-[1920px] mx-auto flex justify-end items-center mb-4 sm:mb-6 lg:mb-8">
-        <!-- Double size Consolas font allowing lower & mixed-case -->
         <h1 class="text-2xl sm:text-3xl font-medium tracking-normal text-zinc-900 font-mono">Portfolio</h1>
     </header>
 
     <!-- MAIN CONTAINER - Pure Photo Collage Grid -->
     <main class="max-w-[1920px] mx-auto">
-        <!-- Masonry Grid Layout using CSS Columns (1 col mobile, 2 tablet, 3-4 desktop) -->
-        <div id="gallery-grid" class="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-3 sm:gap-4 lg:gap-5 space-y-3 sm:space-y-4 lg:space-y-5">
-            <!-- Photos dynamically rendered via JavaScript -->
+        <!-- Masonry Grid Layout (Populated left-to-right via JS so newest photos sit at the top) -->
+        <div id="gallery-grid" class="flex items-start gap-3 sm:gap-4 lg:gap-5">
+            <!-- Columns & photos dynamically rendered via JavaScript -->
         </div>
     </main>
 
@@ -79,7 +71,6 @@
        
         <!-- Lightbox Top Navigation Bar -->
         <div class="flex justify-end items-center z-10 w-full pointer-events-auto">
-            <!-- Close Button -->
             <button id="lightbox-close" class="p-2 hover:text-zinc-900 focus:outline-none transition-colors duration-150 text-zinc-500 group" title="Close (Esc)">
                 <svg class="w-6 h-6 transform group-hover:scale-110 transition-transform duration-150" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12"></path>
@@ -116,73 +107,75 @@
 
         <!-- Empty Spacer for Bottom Alignment Balance -->
         <div class="h-4"></div>
-
     </div>
 
     <!-- JAVASCRIPT LOGIC -->
     <script>
         /**
-         * Editorial Photography Data Set with Full Metadata
-         *
-         * Metadata fields:
-         * - date: Accepts 'YYYY.MM.DD' or 'DD.MM.YYYY' (automatically sorted newest-first & formatted as dd.mm.yyyy)
-         * - camera: Shown in lightbox
-         * - settings: Shown in lightbox (e.g. '24mm · f/8.0 · 15" · ISO 100')
+         * Dates can be written as "dd.mm.yyyy" (e.g., "12.11.2026")
          */
         const photos = [
             {
                 id: 14,
                 src: "images/DSCF8275 (3).jpg",
-                date: "2026.11.12",
+                aspect: "800/1050",
+                date: "12.11.2026",
                 camera: "Fujifilm X100VI",
                 settings: "23mm · f/2.0 · 1/500s · ISO 160"
             },
             {
                 id: 13,
                 src: "images/DSCF8639.jpg",
-                date: "2026.08.04",
+                aspect: "1000/750",
+                date: "04.08.2026",
                 camera: "Canon EOS R5",
                 settings: "24mm · f/4.0 · 1/800s · ISO 400"
             },
             {
                 id: 12,
                 src: "images/DSCF8539.jpg",
-                date: "2026.07.21",
+                aspect: "800/1100",
+                date: "21.07.2026",
                 camera: "Ricoh GR III",
                 settings: '18.3mm · f/5.6 · 2.5" · ISO 200'
             },
             {
                 id: 11,
                 src: "images/DSCF5177.jpg",
-                date: "2026.06.30",
+                aspect: "1000/800",
+                date: "30.06.2026",
                 camera: "Nikon Z6 II",
                 settings: "85mm · f/1.8 · 1/4000s · ISO 100"
             },
             {
                 id: 10,
                 src: "images/20261024_173313.jpg",
-                date: "2026.05.18",
+                aspect: "800/1000",
+                date: "18.05.2026",
                 camera: "Fujifilm X-T5",
                 settings: "16mm · f/5.6 · 1/125s · ISO 160"
             },
             {
                 id: 9,
                 src: "images/DSC05889.jpg",
-                date: "2026.04.10",
+                aspect: "1000/700",
+                date: "10.04.2026",
                 camera: "Hasselblad X2D 100C",
                 settings: "38mm · f/2.5 · 1/60s · ISO 64"
             },
             {
                 id: 8,
                 src: "images/DSCF6871.jpg",
-                date: "2026.03.22",
+                aspect: "800/1150",
+                date: "22.03.2026",
                 camera: "Fujifilm X100V",
                 settings: "23mm · f/2.0 · 1/1000s · ISO 320"
             },
             {
                 id: 7,
                 src: "images/DSCF6109.jpg",
-                date: "2026.02.14",
+                aspect: "900/900",
+                date: "14.02.2026",
                 camera: "Sony A7R V",
                 settings: "35mm · f/2.8 · 1/160s · ISO 800"
             },
@@ -190,39 +183,291 @@
                 id: 6,
                 src: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=1000&q=80",
                 alt: "Editorial Portrait",
-                date: "2026.01.05",
+                aspect: "800/1000",
+                date: "05.01.2026",
                 camera: "Leica Q3",
                 settings: "28mm · f/1.7 · 1/2000s · ISO 100"
             },
             {
                 id: 5,
                 src: "images/DSCF5652.jpg",
-                date: "2025.12.19",
+                aspect: "1000/720",
+                date: "19.12.2025",
                 camera: "Canon EOS R6 Mark II",
                 settings: "70mm · f/2.8 · 1/400s · ISO 160"
             },
             {
                 id: 4,
                 src: "images/DSCF5745.jpg",
-                date: "2025.11.08",
+                aspect: "800/1060",
+                date: "08.11.2025",
                 camera: "Fujifilm Pro3",
                 settings: "35mm · f/1.4 · 1/500s · ISO 200"
             },
             {
                 id: 3,
                 src: "images/DSCF5170.jpg",
-                date: "2025.10.12",
+                aspect: "1000/780",
+                date: "12.10.2025",
                 camera: "Sony FX3",
                 settings: "24mm · f/2.0 · 1/250s · ISO 400"
             },
             {
                 id: 2,
                 src: "images/DSCF4569.jpg",
-                date: "2025.09.01",
+                aspect: "800/1020",
+                date: "01.09.2025",
                 camera: "Nikon Zf",
                 settings: "40mm · f/2.0 · 1/1250s · ISO 100"
             },
             {
                 id: 1,
                 src: "images/DSCF4376.jpg",
-                date: "2026.08.
+                aspect: "1000/750",
+                date: "02.08.2026",
+                camera: "X100V",
+                settings: "26.1mm · f/2.8 · 1/160s · ISO 200"
+            }
+        ];
+
+        // Generate varied-aspect placeholder SVGs when local image files aren't present in the preview
+        function getFallbackSVG(photo) {
+            const [w, h] = (photo && photo.aspect ? photo.aspect : '800/600').split('/');
+            const fileName = photo && photo.src ? photo.src.split('/').pop() : 'Image Unavailable';
+            return `data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='${w}' height='${h}' viewBox='0 0 ${w} ${h}'%3E%3Crect width='${w}' height='${h}' fill='%23f4f4f5'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='monospace' font-size='15' fill='%23a1a1aa'%3E${encodeURIComponent(fileName)}%3C/text%3E%3C/svg%3E`;
+        }
+
+        let displayPhotos = [];
+        let currentIndex = 0;
+        let currentColCount = 0;
+
+        function getPhotoNumber(photo) {
+            const src = photo.src || '';
+            const match = src.match(/(\d+)(?=[^\d]*$)/) || src.match(/(\d+)/);
+            if (match) return parseInt(match[1], 10);
+            return typeof photo.id === 'number' ? photo.id : 0;
+        }
+
+        // Parse date string (supports dd.mm.yyyy and yyyy.mm.dd) into a timestamp for sorting
+        function parsePhotoDate(dateStr) {
+            if (!dateStr) return 0;
+            const parts = dateStr.trim().split(/[.\/-]/);
+            if (parts.length === 3) {
+                let day, month, year;
+                if (parts[0].length === 4) {
+                    // Format: yyyy.mm.dd
+                    [year, month, day] = parts.map(Number);
+                } else {
+                    // Format: dd.mm.yyyy
+                    [day, month, year] = parts.map(Number);
+                }
+                const dateObj = new Date(year, month - 1, day);
+                return isNaN(dateObj.getTime()) ? 0 : dateObj.getTime();
+            }
+            const fallback = Date.parse(dateStr);
+            return isNaN(fallback) ? 0 : fallback;
+        }
+
+        // Always format date display as dd.mm.yyyy
+        function formatDisplayDate(dateStr) {
+            if (!dateStr) return '';
+            const parts = dateStr.trim().split(/[.\/-]/);
+            if (parts.length === 3) {
+                let day, month, year;
+                if (parts[0].length === 4) {
+                    [year, month, day] = parts;
+                } else {
+                    [day, month, year] = parts;
+                }
+                return `${day.padStart(2, '0')}.${month.padStart(2, '0')}.${year}`;
+            }
+            return dateStr;
+        }
+
+        // Sort photos descending by date (most recent date first)
+        function sortPhotosDescending() {
+            displayPhotos = [...photos].sort((a, b) => {
+                const dateA = parsePhotoDate(a.date);
+                const dateB = parsePhotoDate(b.date);
+                if (dateB !== dateA) {
+                    return dateB - dateA;
+                }
+                return getPhotoNumber(b) - getPhotoNumber(a);
+            });
+        }
+
+        // Determine responsive column count matching Tailwind breakpoints
+        function getColumnCount() {
+            const width = window.innerWidth;
+            if (width >= 1024) return 4; // lg
+            if (width >= 768) return 3;  // md
+            if (width >= 640) return 2;  // sm
+            return 1;
+        }
+
+        // DOM Elements
+        const galleryGrid = document.getElementById('gallery-grid');
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightbox-img');
+        const lightboxMeta = document.getElementById('lightbox-meta');
+        const lightboxClose = document.getElementById('lightbox-close');
+        const lightboxPrev = document.getElementById('lightbox-prev');
+        const lightboxNext = document.getElementById('lightbox-next');
+        const lightboxCard = document.getElementById('lightbox-card');
+
+        // Render Masonry Grid Left-to-Right
+        function renderGallery(force = false) {
+            const colCount = getColumnCount();
+            if (!force && colCount === currentColCount) return;
+            currentColCount = colCount;
+
+            sortPhotosDescending();
+            galleryGrid.innerHTML = '';
+
+            // Create column containers
+            const columns = [];
+            for (let i = 0; i < colCount; i++) {
+                const col = document.createElement('div');
+                col.className = 'flex-1 flex flex-col gap-3 sm:gap-4 lg:gap-5';
+                galleryGrid.appendChild(col);
+                columns.push(col);
+            }
+
+            // Distribute sorted photos across columns left-to-right
+            displayPhotos.forEach((photo, index) => {
+                const item = document.createElement('div');
+                item.className = 'relative group overflow-hidden bg-zinc-100 rounded-sm cursor-pointer';
+                const formattedDate = formatDisplayDate(photo.date);
+
+                const img = document.createElement('img');
+                img.src = photo.src;
+                img.alt = photo.alt || 'image';
+                img.loading = 'lazy';
+                img.className = 'w-full h-auto object-cover transition-all duration-150 group-hover:scale-[1.015] group-hover:opacity-95';
+                img.onerror = function() {
+                    this.onerror = null;
+                    this.src = getFallbackSVG(photo);
+                };
+
+                const overlay = document.createElement('div');
+                overlay.className = 'absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-150 flex items-end p-3 pointer-events-none';
+                overlay.innerHTML = `<span class="font-mono text-xs text-white/90 tracking-wide">${formattedDate}</span>`;
+
+                item.appendChild(img);
+                item.appendChild(overlay);
+
+                item.addEventListener('click', () => openLightbox(index));
+                columns[index % colCount].appendChild(item);
+            });
+        }
+
+        // Lightbox Operations
+        function openLightbox(index) {
+            currentIndex = index;
+            updateLightboxContent();
+           
+            lightbox.classList.remove('opacity-0', 'pointer-events-none');
+            lightbox.classList.add('opacity-100', 'pointer-events-auto');
+            lightbox.setAttribute('aria-hidden', 'false');
+            document.body.classList.add('modal-open');
+        }
+
+        function closeLightbox() {
+            lightbox.classList.remove('opacity-100', 'pointer-events-auto');
+            lightbox.classList.add('opacity-0', 'pointer-events-none');
+            lightbox.setAttribute('aria-hidden', 'true');
+            document.body.classList.remove('modal-open');
+        }
+
+        function updateLightboxContent() {
+            const photo = displayPhotos[currentIndex];
+            if (!photo) return;
+
+            lightboxImg.style.opacity = '0';
+            lightboxMeta.style.opacity = '0';
+
+            setTimeout(() => {
+                lightboxImg.onerror = function() {
+                    this.onerror = null;
+                    this.src = getFallbackSVG(photo);
+                };
+                lightboxImg.src = photo.src;
+                lightboxImg.alt = photo.alt || 'Portfolio Photograph';
+
+                const metaParts = [];
+                const formattedDate = formatDisplayDate(photo.date);
+                if (formattedDate) metaParts.push(`<span>${formattedDate}</span>`);
+                if (photo.camera) metaParts.push(`<span>${photo.camera}</span>`);
+                if (photo.settings) metaParts.push(`<span>${photo.settings}</span>`);
+               
+                lightboxMeta.innerHTML = metaParts.join('<span class="text-zinc-300">·</span>');
+
+                lightboxImg.style.opacity = '1';
+                lightboxMeta.style.opacity = '1';
+            }, 50);
+        }
+
+        function nextPhoto(e) {
+            if (e) e.stopPropagation();
+            currentIndex = (currentIndex + 1) % displayPhotos.length;
+            updateLightboxContent();
+        }
+
+        function prevPhoto(e) {
+            if (e) e.stopPropagation();
+            currentIndex = (currentIndex - 1 + displayPhotos.length) % displayPhotos.length;
+            updateLightboxContent();
+        }
+
+        lightbox.addEventListener('click', (e) => {
+            const isClickInsideCard = lightboxCard.contains(e.target);
+            const isClickInsidePrev = lightboxPrev.contains(e.target);
+            const isClickInsideNext = lightboxNext.contains(e.target);
+           
+            if (!isClickInsideCard && !isClickInsidePrev && !isClickInsideNext) {
+                closeLightbox();
+            }
+        });
+
+        lightboxClose.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLightbox();
+        });
+        lightboxNext.addEventListener('click', nextPhoto);
+        lightboxPrev.addEventListener('click', prevPhoto);
+
+        window.addEventListener('keydown', (e) => {
+            if (lightbox.classList.contains('opacity-100')) {
+                if (e.key === 'Escape') closeLightbox();
+                if (e.key === 'ArrowRight') nextPhoto();
+                if (e.key === 'ArrowLeft') prevPhoto();
+            }
+        });
+
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        lightbox.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+
+        lightbox.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        }, { passive: true });
+
+        function handleSwipe() {
+            const swipeThreshold = 50;
+            if (touchEndX < touchStartX - swipeThreshold) {
+                nextPhoto();
+            } else if (touchEndX > touchStartX + swipeThreshold) {
+                prevPhoto();
+            }
+        }
+
+        // Initialize Gallery on Load & Re-layout on Screen Resize
+        window.addEventListener('DOMContentLoaded', () => renderGallery(true));
+        window.addEventListener('resize', () => renderGallery(false));
+    </script>
+</body>
+</html>
