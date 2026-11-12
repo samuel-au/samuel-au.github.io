@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>updated</title>
+    <title>Minimalist Photography Portfolio | Photo Collage</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -60,7 +60,7 @@
 
     <!-- MAIN CONTAINER - Pure Photo Collage Grid -->
     <main class="max-w-[1920px] mx-auto">
-        <!-- Masonry Grid Layout (Populated left-to-right via JS so newest photos sit at the top) -->
+        <!-- Masonry Grid Layout (Shortest-column placement: highest top border first, left tie-breaker) -->
         <div id="gallery-grid" class="flex items-start gap-3 sm:gap-4 lg:gap-5">
             <!-- Columns & photos dynamically rendered via JavaScript -->
         </div>
@@ -118,15 +118,13 @@
             {
                 id: 14,
                 src: "images/DSCF8275 (3).jpg",
-                aspect: "800/1050",
                 date: "12.11.2026",
                 camera: "Fujifilm X100VI",
-                settings: "IS0 160 · f/2.0 · 1/30s"
+                settings: "23mm · f/2.0 · 1/500s · ISO 160"
             },
             {
                 id: 13,
                 src: "images/DSCF8639.jpg",
-                aspect: "1000/750",
                 date: "04.08.2026",
                 camera: "Canon EOS R5",
                 settings: "24mm · f/4.0 · 1/800s · ISO 400"
@@ -134,7 +132,6 @@
             {
                 id: 12,
                 src: "images/DSCF8539.jpg",
-                aspect: "800/1100",
                 date: "21.07.2026",
                 camera: "Ricoh GR III",
                 settings: '18.3mm · f/5.6 · 2.5" · ISO 200'
@@ -142,7 +139,6 @@
             {
                 id: 11,
                 src: "images/DSCF5177.jpg",
-                aspect: "1000/800",
                 date: "30.06.2026",
                 camera: "Nikon Z6 II",
                 settings: "85mm · f/1.8 · 1/4000s · ISO 100"
@@ -150,7 +146,6 @@
             {
                 id: 10,
                 src: "images/20261024_173313.jpg",
-                aspect: "800/1000",
                 date: "18.05.2026",
                 camera: "Fujifilm X-T5",
                 settings: "16mm · f/5.6 · 1/125s · ISO 160"
@@ -158,7 +153,6 @@
             {
                 id: 9,
                 src: "images/DSC05889.jpg",
-                aspect: "1000/700",
                 date: "10.04.2026",
                 camera: "Hasselblad X2D 100C",
                 settings: "38mm · f/2.5 · 1/60s · ISO 64"
@@ -166,7 +160,6 @@
             {
                 id: 8,
                 src: "images/DSCF6871.jpg",
-                aspect: "800/1150",
                 date: "22.03.2026",
                 camera: "Fujifilm X100V",
                 settings: "23mm · f/2.0 · 1/1000s · ISO 320"
@@ -174,7 +167,6 @@
             {
                 id: 7,
                 src: "images/DSCF6109.jpg",
-                aspect: "900/900",
                 date: "14.02.2026",
                 camera: "Sony A7R V",
                 settings: "35mm · f/2.8 · 1/160s · ISO 800"
@@ -183,7 +175,6 @@
                 id: 6,
                 src: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=1000&q=80",
                 alt: "Editorial Portrait",
-                aspect: "800/1000",
                 date: "05.01.2026",
                 camera: "Leica Q3",
                 settings: "28mm · f/1.7 · 1/2000s · ISO 100"
@@ -191,7 +182,6 @@
             {
                 id: 5,
                 src: "images/DSCF5652.jpg",
-                aspect: "1000/720",
                 date: "19.12.2025",
                 camera: "Canon EOS R6 Mark II",
                 settings: "70mm · f/2.8 · 1/400s · ISO 160"
@@ -199,7 +189,6 @@
             {
                 id: 4,
                 src: "images/DSCF5745.jpg",
-                aspect: "800/1060",
                 date: "08.11.2025",
                 camera: "Fujifilm Pro3",
                 settings: "35mm · f/1.4 · 1/500s · ISO 200"
@@ -207,7 +196,6 @@
             {
                 id: 3,
                 src: "images/DSCF5170.jpg",
-                aspect: "1000/780",
                 date: "12.10.2025",
                 camera: "Sony FX3",
                 settings: "24mm · f/2.0 · 1/250s · ISO 400"
@@ -215,7 +203,6 @@
             {
                 id: 2,
                 src: "images/DSCF4569.jpg",
-                aspect: "800/1020",
                 date: "01.09.2025",
                 camera: "Nikon Zf",
                 settings: "40mm · f/2.0 · 1/1250s · ISO 100"
@@ -223,24 +210,31 @@
             {
                 id: 1,
                 src: "images/DSCF4376.jpg",
-                aspect: "1000/750",
                 date: "02.08.2026",
                 camera: "X100V",
                 settings: "26.1mm · f/2.8 · 1/160s · ISO 200"
             }
         ];
 
-        // Generate varied-aspect placeholder SVGs when local image files aren't present in the preview
-        function getFallbackSVG(photo) {
-            const [w, h] = (photo && photo.aspect ? photo.aspect : '800/600').split('/');
-            const fileName = photo && photo.src ? photo.src.split('/').pop() : 'Image Unavailable';
-            return `data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='${w}' height='${h}' viewBox='0 0 ${w} ${h}'%3E%3Crect width='${w}' height='${h}' fill='%23f4f4f5'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='monospace' font-size='15' fill='%23a1a1aa'%3E${encodeURIComponent(fileName)}%3C/text%3E%3C/svg%3E`;
-        }
+        const fallbackSVG = "data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='600' viewBox='0 0 800 600'%3E%3Crect width='800' height='600' fill='%23f4f4f5'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='monospace' font-size='16' fill='%23a1a1aa'%3EImage Unavailable%3C/text%3E%3C/svg%3E";
 
         let displayPhotos = [];
+        let photoCards = [];
         let currentIndex = 0;
         let currentColCount = 0;
+        let layoutFramePending = false;
 
+        // DOM Elements
+        const galleryGrid = document.getElementById('gallery-grid');
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightbox-img');
+        const lightboxMeta = document.getElementById('lightbox-meta');
+        const lightboxClose = document.getElementById('lightbox-close');
+        const lightboxPrev = document.getElementById('lightbox-prev');
+        const lightboxNext = document.getElementById('lightbox-next');
+        const lightboxCard = document.getElementById('lightbox-card');
+
+        // Extract numerical index from filename or photo ID
         function getPhotoNumber(photo) {
             const src = photo.src || '';
             const match = src.match(/(\d+)(?=[^\d]*$)/) || src.match(/(\d+)/);
@@ -255,10 +249,8 @@
             if (parts.length === 3) {
                 let day, month, year;
                 if (parts[0].length === 4) {
-                    // Format: yyyy.mm.dd
                     [year, month, day] = parts.map(Number);
                 } else {
-                    // Format: dd.mm.yyyy
                     [day, month, year] = parts.map(Number);
                 }
                 const dateObj = new Date(year, month - 1, day);
@@ -305,23 +297,76 @@
             return 1;
         }
 
-        // DOM Elements
-        const galleryGrid = document.getElementById('gallery-grid');
-        const lightbox = document.getElementById('lightbox');
-        const lightboxImg = document.getElementById('lightbox-img');
-        const lightboxMeta = document.getElementById('lightbox-meta');
-        const lightboxClose = document.getElementById('lightbox-close');
-        const lightboxPrev = document.getElementById('lightbox-prev');
-        const lightboxNext = document.getElementById('lightbox-next');
-        const lightboxCard = document.getElementById('lightbox-card');
+        // Build card DOM nodes once in sorted chronological order
+        function buildPhotoCards() {
+            sortPhotosDescending();
+            photoCards = displayPhotos.map((photo, index) => {
+                const item = document.createElement('div');
+                item.className = 'relative group overflow-hidden bg-zinc-100 rounded-sm cursor-pointer';
+                const formattedDate = formatDisplayDate(photo.date);
 
-        // Render Masonry Grid Left-to-Right
+                const img = document.createElement('img');
+                img.src = photo.src;
+                img.alt = photo.alt || 'image';
+                img.className = 'w-full h-auto object-cover transition-all duration-150 group-hover:scale-[1.015] group-hover:opacity-95';
+
+                // Re-balance masonry columns whenever an image's height settles
+                img.addEventListener('load', scheduleRelayout);
+                img.addEventListener('error', function () {
+                    if (this.src !== fallbackSVG) {
+                        this.src = fallbackSVG;
+                    }
+                    scheduleRelayout();
+                });
+
+                const overlay = document.createElement('div');
+                overlay.className = 'absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-150 flex items-end p-3 pointer-events-none';
+                overlay.innerHTML = `<span class="font-mono text-xs text-white/90 tracking-wide">${formattedDate}</span>`;
+
+                item.appendChild(img);
+                item.appendChild(overlay);
+                item.addEventListener('click', () => openLightbox(index));
+
+                return item;
+            });
+        }
+
+        // Throttle layout recalculations to the next animation frame
+        function scheduleRelayout() {
+            if (layoutFramePending) return;
+            layoutFramePending = true;
+            requestAnimationFrame(() => {
+                layoutFramePending = false;
+                renderGallery(true);
+            });
+        }
+
+        // Find the column whose bottom edge is highest (smallest offsetHeight).
+        // Strict `<` ensures left columns win automatically on equal height.
+        function getShortestColumnIndex(columns) {
+            let shortestIndex = 0;
+            let minHeight = columns[0].offsetHeight;
+
+            for (let i = 1; i < columns.length; i++) {
+                const colHeight = columns[i].offsetHeight;
+                if (colHeight < minHeight) {
+                    minHeight = colHeight;
+                    shortestIndex = i;
+                }
+            }
+            return shortestIndex;
+        }
+
+        // Render Masonry Grid placing each next-newest photo at the highest available top border
         function renderGallery(force = false) {
             const colCount = getColumnCount();
             if (!force && colCount === currentColCount) return;
             currentColCount = colCount;
 
-            sortPhotosDescending();
+            if (photoCards.length === 0) {
+                buildPhotoCards();
+            }
+
             galleryGrid.innerHTML = '';
 
             // Create column containers
@@ -333,31 +378,10 @@
                 columns.push(col);
             }
 
-            // Distribute sorted photos across columns left-to-right
-            displayPhotos.forEach((photo, index) => {
-                const item = document.createElement('div');
-                item.className = 'relative group overflow-hidden bg-zinc-100 rounded-sm cursor-pointer';
-                const formattedDate = formatDisplayDate(photo.date);
-
-                const img = document.createElement('img');
-                img.src = photo.src;
-                img.alt = photo.alt || 'image';
-                img.loading = 'lazy';
-                img.className = 'w-full h-auto object-cover transition-all duration-150 group-hover:scale-[1.015] group-hover:opacity-95';
-                img.onerror = function() {
-                    this.onerror = null;
-                    this.src = getFallbackSVG(photo);
-                };
-
-                const overlay = document.createElement('div');
-                overlay.className = 'absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-150 flex items-end p-3 pointer-events-none';
-                overlay.innerHTML = `<span class="font-mono text-xs text-white/90 tracking-wide">${formattedDate}</span>`;
-
-                item.appendChild(img);
-                item.appendChild(overlay);
-
-                item.addEventListener('click', () => openLightbox(index));
-                columns[index % colCount].appendChild(item);
+            // Append each card into whichever column currently has the highest bottom edge
+            photoCards.forEach((card) => {
+                const targetColIndex = getShortestColumnIndex(columns);
+                columns[targetColIndex].appendChild(card);
             });
         }
 
@@ -387,12 +411,13 @@
             lightboxMeta.style.opacity = '0';
 
             setTimeout(() => {
-                lightboxImg.onerror = function() {
-                    this.onerror = null;
-                    this.src = getFallbackSVG(photo);
-                };
                 lightboxImg.src = photo.src;
                 lightboxImg.alt = photo.alt || 'Portfolio Photograph';
+               
+                lightboxImg.onerror = function() {
+                    this.onerror = null;
+                    this.src = fallbackSVG;
+                };
 
                 const metaParts = [];
                 const formattedDate = formatDisplayDate(photo.date);
