@@ -30,7 +30,6 @@
             page-break-inside: avoid;
         }
 
-
         /* Prevent image context highlighting & smooth rendering */
         img {
             -webkit-user-select: none;
@@ -38,12 +37,10 @@
             -webkit-touch-callout: none;
         }
 
-
         /* Hide scrollbars during full-screen modal open */
         body.modal-open {
             overflow: hidden;
         }
-
 
         /* Custom scrollbar styling for gallery page */
         ::-webkit-scrollbar {
@@ -63,13 +60,11 @@
 </head>
 <body class="min-h-screen bg-white font-sans antialiased selection:bg-zinc-200 selection:text-zinc-900 p-4 sm:p-6 lg:p-8">
 
-
     <!-- TOP HEADER WITH RIGHT ALIGNED HEADLINE -->
     <header class="max-w-[1920px] mx-auto flex justify-end items-center mb-4 sm:mb-6 lg:mb-8">
         <!-- Double size Consolas font allowing lower & mixed-case -->
         <h1 class="text-2xl sm:text-3xl font-medium tracking-normal text-zinc-900 font-mono">Portfolio</h1>
     </header>
-
 
     <!-- MAIN CONTAINER - Pure Photo Collage Grid -->
     <main class="max-w-[1920px] mx-auto">
@@ -78,7 +73,6 @@
             <!-- Photos dynamically rendered via JavaScript -->
         </div>
     </main>
-
 
     <!-- LIGHTBOX MODAL OVERLAY -->
     <div id="lightbox" class="fixed inset-0 z-50 bg-white/95 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-150 flex flex-col justify-between p-4 sm:p-6 select-none cursor-pointer" aria-hidden="true" role="dialog">
@@ -93,7 +87,6 @@
             </button>
         </div>
 
-
         <!-- Lightbox Main Stage (Image + Arrow Buttons) -->
         <div id="lightbox-stage" class="relative flex-1 flex items-center justify-center my-4 overflow-hidden">
            
@@ -104,7 +97,6 @@
                 </svg>
             </button>
 
-
             <!-- Active Lightbox Photo + Metadata Card -->
             <div id="lightbox-card" class="relative max-w-full max-h-full flex flex-col items-center justify-center pointer-events-auto select-text cursor-default">
                 <img id="lightbox-img" src="" alt="" class="max-w-full max-h-[76vh] object-contain shadow-xl opacity-0 transition-opacity duration-150 cursor-default" />
@@ -114,7 +106,6 @@
                 </div>
             </div>
 
-
             <!-- Next Button -->
             <button id="lightbox-next" class="absolute right-2 sm:right-4 z-20 p-3 text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100/80 rounded-full transition-all duration-150 focus:outline-none backdrop-blur-sm pointer-events-auto" title="Next Image (Right Arrow)">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -123,24 +114,18 @@
             </button>
         </div>
 
-
         <!-- Empty Spacer for Bottom Alignment Balance -->
         <div class="h-4"></div>
 
-
     </div>
-
 
     <!-- JAVASCRIPT LOGIC -->
     <script>
         /**
          * Editorial Photography Data Set with Full Metadata
          *
-         * To replace these with your own photos:
-         * Change the 'src' value to your local image path (e.g. 'images/photo1.jpg').
-         *
          * Metadata fields:
-         * - date: Shown on hover in grid & in lightbox (used for automatic chronological sorting)
+         * - date: Accepts 'YYYY.MM.DD' or 'DD.MM.YYYY' (automatically sorted newest-first & formatted as dd.mm.yyyy)
          * - camera: Shown in lightbox
          * - settings: Shown in lightbox (e.g. '24mm · f/8.0 · 15" · ISO 100')
          */
@@ -240,224 +225,4 @@
             {
                 id: 1,
                 src: "images/DSCF4376.jpg",
-                date: "2026.08.02",
-                camera: "X100V",
-                settings: "26.1mm · f/2.8 · 1/160s · ISO 200"
-            }
-        ];
-
-
-        // Safe SVG placeholder fallback Data URI if an image link fails or is offline
-        const fallbackSVG = "data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='600' viewBox='0 0 800 600'%3E%3Crect width='800' height='600' fill='%2523f4f4f5'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='monospace' font-size='16' fill='%2523a1a1aa'%3EImage Unavailable%3C/text%3E%3C/svg%3E";
-
-
-        // Array storing sorted photos
-        let displayPhotos = [];
-        let currentIndex = 0;
-
-
-        // Extract numerical index from filename or photo ID
-        function getPhotoNumber(photo) {
-            const src = photo.src || '';
-            const match = src.match(/(\d+)(?=[^\d]*$)/) || src.match(/(\d+)/);
-            if (match) return parseInt(match[1], 10);
-            return typeof photo.id === 'number' ? photo.id : 0;
-        }
-
-
-        // Helper to parse date string into timestamp (supports YYYY.MM.DD, YYYY-MM-DD, YYYY/MM/DD)
-        function parsePhotoDate(dateStr) {
-            if (!dateStr) return 0;
-            const normalized = dateStr.replace(/\./g, '-');
-            const timestamp = Date.parse(normalized);
-            return isNaN(timestamp) ? 0 : timestamp;
-        }
-
-
-        // Sort photos descending by date (most recent date first)
-        function sortPhotosDescending() {
-            displayPhotos = [...photos].sort((a, b) => {
-                const dateA = parsePhotoDate(a.date);
-                const dateB = parsePhotoDate(b.date);
-                if (dateB !== dateA) {
-                    return dateB - dateA; // Newest date sits at top
-                }
-                return getPhotoNumber(b) - getPhotoNumber(a); // Fallback tie-breaker
-            });
-        }
-
-
-        // DOM Elements
-        const galleryGrid = document.getElementById('gallery-grid');
-        const lightbox = document.getElementById('lightbox');
-        const lightboxImg = document.getElementById('lightbox-img');
-        const lightboxMeta = document.getElementById('lightbox-meta');
-        const lightboxClose = document.getElementById('lightbox-close');
-        const lightboxPrev = document.getElementById('lightbox-prev');
-        const lightboxNext = document.getElementById('lightbox-next');
-        const lightboxCard = document.getElementById('lightbox-card');
-
-
-        // Render Masonry Grid
-        function renderGallery() {
-            sortPhotosDescending();
-            galleryGrid.innerHTML = '';
-           
-            displayPhotos.forEach((photo, index) => {
-                const item = document.createElement('div');
-                item.className = 'masonry-item relative group overflow-hidden bg-zinc-100 rounded-sm cursor-pointer break-inside-avoid';
-               
-                // HTML for Grid item: Image + Hover Scrim with DATE ONLY
-                item.innerHTML = `
-                    <img
-                        src="${photo.src}"
-                        alt="${photo.alt || 'image'}"
-                        loading="lazy"
-                        onerror="this.onerror=null; this.src='${fallbackSVG}';"
-                        class="w-full h-auto object-cover transition-all duration-150 group-hover:scale-[1.015] group-hover:opacity-95"
-                    />
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-150 flex items-end p-3 pointer-events-none">
-                        <span class="font-mono text-xs text-white/90 tracking-wide">${photo.date || ''}</span>
-                    </div>
-                `;
-
-
-                item.addEventListener('click', () => openLightbox(index));
-                galleryGrid.appendChild(item);
-            });
-        }
-
-
-        // Lightbox Operations
-        function openLightbox(index) {
-            currentIndex = index;
-            updateLightboxContent();
-           
-            lightbox.classList.remove('opacity-0', 'pointer-events-none');
-            lightbox.classList.add('opacity-100', 'pointer-events-auto');
-            lightbox.setAttribute('aria-hidden', 'false');
-            document.body.classList.add('modal-open');
-        }
-
-
-        function closeLightbox() {
-            lightbox.classList.remove('opacity-100', 'pointer-events-auto');
-            lightbox.classList.add('opacity-0', 'pointer-events-none');
-            lightbox.setAttribute('aria-hidden', 'true');
-            document.body.classList.remove('modal-open');
-        }
-
-
-        function updateLightboxContent() {
-            const photo = displayPhotos[currentIndex];
-            if (!photo) return;
-
-
-            // Fade out current content briefly for quick transition
-            lightboxImg.style.opacity = '0';
-            lightboxMeta.style.opacity = '0';
-
-
-            setTimeout(() => {
-                lightboxImg.src = photo.src;
-                lightboxImg.alt = photo.alt || 'Portfolio Photograph';
-               
-                // Error handler for lightbox image
-                lightboxImg.onerror = function() {
-                    this.onerror = null;
-                    this.src = fallbackSVG;
-                };
-
-
-                // Render all 3 metadata items cleanly: DATE · CAMERA · SETTINGS
-                const metaParts = [];
-                if (photo.date) metaParts.push(`<span>${photo.date}</span>`);
-                if (photo.camera) metaParts.push(`<span>${photo.camera}</span>`);
-                if (photo.settings) metaParts.push(`<span>${photo.settings}</span>`);
-               
-                lightboxMeta.innerHTML = metaParts.join('<span class="text-zinc-300">·</span>');
-
-
-                lightboxImg.style.opacity = '1';
-                lightboxMeta.style.opacity = '1';
-            }, 50);
-        }
-
-
-        function nextPhoto(e) {
-            if (e) e.stopPropagation();
-            currentIndex = (currentIndex + 1) % displayPhotos.length;
-            updateLightboxContent();
-        }
-
-
-        function prevPhoto(e) {
-            if (e) e.stopPropagation();
-            currentIndex = (currentIndex - 1 + displayPhotos.length) % displayPhotos.length;
-            updateLightboxContent();
-        }
-
-
-        // Click-off backdrop exit (exits if click target is outside the combined photo+meta card and buttons)
-        lightbox.addEventListener('click', (e) => {
-            const isClickInsideCard = lightboxCard.contains(e.target);
-            const isClickInsidePrev = lightboxPrev.contains(e.target);
-            const isClickInsideNext = lightboxNext.contains(e.target);
-           
-            if (!isClickInsideCard && !isClickInsidePrev && !isClickInsideNext) {
-                closeLightbox();
-            }
-        });
-
-
-        // Event Listeners
-        lightboxClose.addEventListener('click', (e) => {
-            e.stopPropagation();
-            closeLightbox();
-        });
-        lightboxNext.addEventListener('click', nextPhoto);
-        lightboxPrev.addEventListener('click', prevPhoto);
-
-
-        // Keyboard Navigation
-        window.addEventListener('keydown', (e) => {
-            if (lightbox.classList.contains('opacity-100')) {
-                if (e.key === 'Escape') closeLightbox();
-                if (e.key === 'ArrowRight') nextPhoto();
-                if (e.key === 'ArrowLeft') prevPhoto();
-            }
-        });
-
-
-        // Touch Swipe Gestures for Mobile
-        let touchStartX = 0;
-        let touchEndX = 0;
-
-
-        lightbox.addEventListener('touchstart', (e) => {
-            touchStartX = e.changedTouches[0].screenX;
-        }, { passive: true });
-
-
-        lightbox.addEventListener('touchend', (e) => {
-            touchEndX = e.changedTouches[0].screenX;
-            handleSwipe();
-        }, { passive: true });
-
-
-        function handleSwipe() {
-            const swipeThreshold = 50;
-            if (touchEndX < touchStartX - swipeThreshold) {
-                nextPhoto();
-            } else if (touchEndX > touchStartX + swipeThreshold) {
-                prevPhoto();
-            }
-        }
-
-
-        // Initialize Gallery on Load
-        window.addEventListener('DOMContentLoaded', renderGallery);
-    </script>
-</body>
-</html>
-
+                date: "2026.08.
