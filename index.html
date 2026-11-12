@@ -55,9 +55,36 @@
 </head>
 <body class="min-h-screen bg-white font-sans antialiased selection:bg-zinc-200 selection:text-zinc-900 p-4 sm:p-6 lg:p-8">
 
-    <!-- TOP HEADER WITH RIGHT ALIGNED HEADLINE -->
+    <!-- TOP HEADER WITH RIGHT ALIGNED HEADLINE & REVEALABLE SOCIAL ICONS -->
     <header class="max-w-[1920px] mx-auto flex justify-end items-center mb-4 sm:mb-6 lg:mb-8">
-        <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" class="text-2xl sm:text-3xl font-medium tracking-normal text-zinc-900 font-mono hover:text-zinc-500 transition-colors duration-150" title="Visit Instagram">Headline</a>
+        <!-- Wrapper keeps icons open when moving mouse smoothly between Headline and icons -->
+        <div id="headline-menu" class="group relative inline-flex items-center py-1 pl-2">
+            
+            <!-- Social Icons Container (Reveals smoothly to the left on hover or mobile tap) -->
+            <div id="social-icons" class="flex items-center gap-3.5 pr-4 opacity-0 translate-x-2 pointer-events-none group-hover:opacity-100 group-hover:translate-x-0 group-hover:pointer-events-auto transition-all duration-200 ease-out">
+                
+                <!-- YouTube Icon Link -->
+                <a href="https://www.youtube.com/" target="_blank" rel="noopener noreferrer" aria-label="YouTube" title="YouTube" class="p-1.5 text-zinc-500 hover:text-zinc-900 transition-colors duration-150">
+                    <svg class="w-5 h-5 sm:w-[22px] sm:h-[22px]" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                    </svg>
+                </a>
+
+                <!-- Instagram Icon Link -->
+                <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" title="Instagram" class="p-1.5 text-zinc-500 hover:text-zinc-900 transition-colors duration-150">
+                    <svg class="w-5 h-5 sm:w-[22px] sm:h-[22px]" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+                        <rect width="20" height="20" x="2" y="2" rx="5" ry="5"></rect>
+                        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                        <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"></line>
+                    </svg>
+                </a>
+            </div>
+
+            <!-- Interactive Headline Trigger -->
+            <button id="headline-trigger" type="button" aria-expanded="false" aria-controls="social-icons" class="text-2xl sm:text-3xl font-medium tracking-normal text-zinc-900 font-mono hover:text-zinc-500 group-hover:text-zinc-500 focus:outline-none transition-colors duration-150 cursor-pointer select-none">
+                Headline
+            </button>
+        </div>
     </header>
 
     <!-- MAIN CONTAINER - Pure Photo Collage Grid -->
@@ -185,7 +212,18 @@
             }
         ];
 
-        const fallbackSVG = "data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='600' viewBox='0 0 800 600'%3E%3Crect width='800' height='600' fill='%23f4f4f5'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='monospace' font-size='16' fill='%23a1a1aa'%3EImage Unavailable%3C/text%3E%3C/svg%3E";
+        // Varied aspect ratios for preview fallbacks when local 'images/...' files are absent
+        const previewDimensions = [
+            [800, 1100], [1000, 750], [800, 1200], [1100, 800],
+            [850, 850],  [800, 1050], [1200, 800], [800, 1150],
+            [1000, 700], [800, 1000], [1100, 780], [800, 1180],
+            [950, 750],  [800, 1080]
+        ];
+
+        function createFallbackSVG(index = 0) {
+            const [w, h] = previewDimensions[index % previewDimensions.length];
+            return `data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='${w}' height='${h}' viewBox='0 0 ${w} ${h}'%3E%3Crect width='${w}' height='${h}' fill='%23f4f4f5'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='monospace' font-size='16' fill='%23a1a1aa'%3EPhoto ${index + 1}%3C/text%3E%3C/svg%3E`;
+        }
 
         let displayPhotos = [];
         let photoCards = [];
@@ -194,6 +232,9 @@
         let layoutFramePending = false;
 
         // DOM Elements
+        const headlineMenu = document.getElementById('headline-menu');
+        const headlineTrigger = document.getElementById('headline-trigger');
+        const socialIcons = document.getElementById('social-icons');
         const galleryGrid = document.getElementById('gallery-grid');
         const lightbox = document.getElementById('lightbox');
         const lightboxTopbar = document.getElementById('lightbox-topbar');
@@ -202,6 +243,44 @@
         const lightboxPrev = document.getElementById('lightbox-prev');
         const lightboxNext = document.getElementById('lightbox-next');
         const lightboxCard = document.getElementById('lightbox-card');
+
+        // Headline & Social Icons Reveal Logic (Supports Hover + Mobile/Touch Click Toggle)
+        let isSocialMenuOpen = false;
+
+        function setSocialMenuState(open) {
+            isSocialMenuOpen = open;
+            headlineTrigger.setAttribute('aria-expanded', String(open));
+
+            if (open) {
+                socialIcons.classList.remove('opacity-0', 'translate-x-2', 'pointer-events-none');
+                socialIcons.classList.add('opacity-100', 'translate-x-0', 'pointer-events-auto');
+                headlineTrigger.classList.add('text-zinc-500');
+            } else {
+                socialIcons.classList.remove('opacity-100', 'translate-x-0', 'pointer-events-auto');
+                socialIcons.classList.add('opacity-0', 'translate-x-2', 'pointer-events-none');
+                headlineTrigger.classList.remove('text-zinc-500');
+            }
+        }
+
+        // Toggle open/closed on click or tap (primarily for mobile/touch screens)
+        headlineTrigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            setSocialMenuState(!isSocialMenuOpen);
+        });
+
+        // Close revealed icons when clicking/tapping anywhere outside the headline menu
+        document.addEventListener('click', (e) => {
+            if (isSocialMenuOpen && !headlineMenu.contains(e.target)) {
+                setSocialMenuState(false);
+            }
+        });
+
+        // Reset pinned open state when mouse leaves the menu on desktop
+        headlineMenu.addEventListener('mouseleave', () => {
+            if (isSocialMenuOpen) {
+                setSocialMenuState(false);
+            }
+        });
 
         // Extract numerical index from filename or photo ID
         function getPhotoNumber(photo) {
@@ -282,8 +361,9 @@
                 // Re-balance masonry columns whenever an image's height settles
                 img.addEventListener('load', scheduleRelayout);
                 img.addEventListener('error', function () {
-                    if (this.src !== fallbackSVG) {
-                        this.src = fallbackSVG;
+                    const fallback = createFallbackSVG(index);
+                    if (this.src !== fallback) {
+                        this.src = fallback;
                     }
                     scheduleRelayout();
                 });
@@ -398,7 +478,7 @@
                
                 lightboxImg.onerror = function() {
                     this.onerror = null;
-                    this.src = fallbackSVG;
+                    this.src = createFallbackSVG(currentIndex);
                 };
 
                 lightboxImg.style.opacity = '1';
@@ -439,6 +519,8 @@
                 if (e.key === 'Escape') closeLightbox();
                 if (e.key === 'ArrowRight') nextPhoto();
                 if (e.key === 'ArrowLeft') prevPhoto();
+            } else if (e.key === 'Escape' && isSocialMenuOpen) {
+                setSocialMenuState(false);
             }
         });
 
