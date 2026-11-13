@@ -328,9 +328,10 @@
             }
         });
 
-        // Interactive Cat PNG State Machine (cat1.png: default, cat2.png: hover, cat3.png: pressed down)
+        // Interactive Cat PNG State Machine (cat1.png: default, cat2.png: hover/mobile-active, cat3.png: pressed down)
         let isCatHovered = false;
         let isCatPressed = false;
+        let isCatMobileSticky = false;
         let isCatTouchActive = false;
 
         function createCatFallbackSVG(state) {
@@ -345,7 +346,7 @@
             let state = 1;
             if (isCatPressed) {
                 state = 3;
-            } else if (isCatHovered) {
+            } else if (isCatHovered || isCatMobileSticky) {
                 state = 2;
             }
 
@@ -394,7 +395,7 @@
         const handleCatTouchEnd = () => {
             if (!isCatTouchActive) return;
             isCatPressed = false;
-            isCatHovered = false;
+            isCatMobileSticky = true;
             updateCatImage();
             setTimeout(() => {
                 isCatTouchActive = false;
@@ -403,6 +404,14 @@
 
         catTrigger.addEventListener('touchend', handleCatTouchEnd, { passive: true });
         catTrigger.addEventListener('touchcancel', handleCatTouchEnd, { passive: true });
+
+        // Reset cat back to cat1.png when pressing any other part of the screen on mobile
+        document.addEventListener('touchstart', (e) => {
+            if (isCatMobileSticky && !catTrigger.contains(e.target)) {
+                isCatMobileSticky = false;
+                updateCatImage();
+            }
+        }, { passive: true });
 
         // Initialize default cat PNG image with transparent fallback support
         updateCatImage();
