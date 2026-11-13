@@ -757,11 +757,9 @@
             const width = window.innerWidth;
             const targetX = direction === 'next' ? -width : width;
 
-            // Smoother, slightly slower glide for keyboard/button navigation; snappy for touch swipes
-            const durationMs = source === 'keyboard' ? 360 : 220;
-            const easing = source === 'keyboard'
-                ? 'cubic-bezier(0.16, 1, 0.3, 1)'
-                : 'cubic-bezier(0.22, 1, 0.36, 1)';
+            // Gentle, unhurried glide for both keyboard/button navigation and touch swipes
+            const durationMs = source === 'keyboard' ? 520 : 380;
+            const easing = 'cubic-bezier(0.22, 1, 0.36, 1)';
 
             requestAnimationFrame(() => {
                 lightboxTrack.style.transition = `transform ${durationMs}ms ${easing}`;
@@ -812,7 +810,7 @@
             const exitY = directionY >= 0 ? height : -height;
 
             lightboxTopbar.style.opacity = '0';
-            lightboxTrack.style.transition = 'transform 200ms cubic-bezier(0.22, 1, 0.36, 1)';
+            lightboxTrack.style.transition = 'transform 260ms cubic-bezier(0.22, 1, 0.36, 1)';
             lightboxTrack.style.transform = `translate3d(0px, ${exitY}px, 0)`;
 
             let finished = false;
@@ -828,7 +826,7 @@
             };
 
             lightboxTrack.addEventListener('transitionend', slideTransitionEndHandler);
-            slideFinishTimer = setTimeout(finishExit, 220);
+            slideFinishTimer = setTimeout(finishExit, 280);
         }
 
         lightbox.addEventListener('click', (e) => {
@@ -996,7 +994,7 @@
                 } else if (isHorizontalSwipe && currentDeltaX > 0 && currentIndex > 0) {
                     slideToPhoto('prev', 'touch');
                 } else {
-                    lightboxTrack.style.transition = 'transform 180ms cubic-bezier(0.22, 1, 0.36, 1)';
+                    lightboxTrack.style.transition = 'transform 300ms cubic-bezier(0.22, 1, 0.36, 1)';
                     lightboxTrack.style.transform = 'translate3d(0px, 0px, 0)';
                 }
             } else if (dragAxis === 'y') {
@@ -1004,7 +1002,7 @@
                     slideOutVertically(currentDeltaY);
                 } else {
                     lightboxTopbar.style.opacity = '1';
-                    lightboxTrack.style.transition = 'transform 180ms cubic-bezier(0.22, 1, 0.36, 1)';
+                    lightboxTrack.style.transition = 'transform 300ms cubic-bezier(0.22, 1, 0.36, 1)';
                     lightboxTrack.style.transform = 'translate3d(0px, 0px, 0)';
                 }
             }
