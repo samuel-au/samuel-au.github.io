@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>portfolio</title>
-    <!-- Browser Tab Icon (Favicon) - Replace href with your own icon path (e.g., "images/favicon.png") if preferred -->
+    <title>Samuel Au</title>
+    <!-- Browser Tab Icon (Favicon) -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2318181b'/%3E%3Ccircle cx='16' cy='16' r='8' fill='none' stroke='%23ffffff' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='2.5' fill='%23ffffff'/%3E%3C/svg%3E">
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -72,26 +72,26 @@
             filter: url(#cardboard-ink-print);
         }
 
-        /* Crisp off-white film date stamp with scanned print ink-bleed (no orange) */
+        /* Crisp off-white film date stamp with scanned print ink-bleed */
         .film-date-glow {
             color: #f4f4f5;
             text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
             filter: url(#cardboard-ink-print);
         }
 
-        /* Headline color: grey only on direct hover for laptop, stays grey while icons are open on mobile */
+        /* Headline color: #71717a on direct hover for desktop, stays #71717a while icons are open on mobile */
         #headline-trigger {
             color: #18181b;
         }
         #headline-trigger:hover,
         #headline-trigger.mobile-active {
-            color: #52525b;
+            color: #71717a;
         }
     </style>
 </head>
 <body class="relative min-h-screen bg-[#f9f8f5] font-sans antialiased selection:bg-zinc-200 selection:text-zinc-900 p-4 sm:p-6 lg:p-8">
 
-    <!-- Subtle Scanned / 90s Outdoor Print Text & Icon Filter: Delicate ink-spread rounding + light analog print grain -->
+    <!-- Subtle Scanned / 90s Outdoor Print Text & Icon Filter -->
     <svg class="sr-only" width="0" height="0" aria-hidden="true">
         <defs>
             <filter id="cardboard-ink-print" x="-15%" y="-15%" width="130%" height="130%" color-interpolation-filters="sRGB">
@@ -117,45 +117,52 @@
 
     <!-- TOP HEADER WITH RIGHT ALIGNED HEADLINE & REVEALABLE SOCIAL ICONS -->
     <header class="max-w-[1920px] mx-auto flex justify-end items-center mb-4 sm:mb-6 lg:mb-8">
-        <!-- Outer wrapper keeps icons open while moving cursor between Headline and revealed icons, without triggering hover prematurely -->
-        <div id="headline-menu" class="relative inline-flex items-center py-1 pl-2">
-            
-            <!-- Social Icons Container (Invisible & non-interactive until Headline is hovered or clicked) -->
-            <div id="social-icons" class="flex items-center gap-3.5 pr-4 invisible opacity-0 translate-x-2 pointer-events-none transition-all duration-200 ease-out">
+        <div class="inline-flex items-center gap-3 sm:gap-4">
+            <!-- Outer wrapper keeps icons open while moving cursor between Headline and revealed icons -->
+            <div id="headline-menu" class="relative inline-flex items-center py-1 pl-2">
                 
-                <!-- YouTube Icon Link -->
-                <a href="https://www.youtube.com/" target="_blank" rel="noopener noreferrer" aria-label="YouTube" title="YouTube" class="textured-ink p-1.5 text-zinc-900 hover:text-zinc-600 transition-colors duration-150">
-                    <svg class="w-5 h-5 sm:w-[22px] sm:h-[22px]" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-                    </svg>
-                </a>
+                <!-- Social Icons Container (Invisible & non-interactive until Headline is hovered or clicked) -->
+                <div id="social-icons" class="flex items-center gap-3.5 pr-4 invisible opacity-0 translate-x-2 pointer-events-none transition-all duration-200 ease-out">
+                    
+                    <!-- YouTube Icon Link with #71717a hover highlight -->
+                    <a href="https://www.youtube.com/" target="_blank" rel="noopener noreferrer" aria-label="YouTube" title="YouTube" class="textured-ink p-1.5 text-zinc-900 hover:text-[#71717a] transition-colors duration-150">
+                        <svg class="w-5 h-5 sm:w-[22px] sm:h-[22px]" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                        </svg>
+                    </a>
 
-                <!-- Instagram Icon Link -->
-                <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" title="Instagram" class="textured-ink p-1.5 text-zinc-900 hover:text-zinc-600 transition-colors duration-150">
-                    <svg class="w-5 h-5 sm:w-[22px] sm:h-[22px]" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
-                        <rect width="20" height="20" x="2" y="2" rx="5" ry="5"></rect>
-                        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                        <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"></line>
-                    </svg>
-                </a>
+                    <!-- Instagram Icon Link with #71717a hover highlight -->
+                    <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" title="Instagram" class="textured-ink p-1.5 text-zinc-900 hover:text-[#71717a] transition-colors duration-150">
+                        <svg class="w-5 h-5 sm:w-[22px] sm:h-[22px]" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+                            <rect width="20" height="20" x="2" y="2" rx="5" ry="5"></rect>
+                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                            <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"></line>
+                        </svg>
+                    </a>
+                </div>
+
+                <!-- Interactive Headline Trigger -->
+                <button id="headline-trigger" type="button" aria-expanded="false" aria-controls="social-icons" class="textured-ink text-2xl sm:text-3xl font-semibold sm:font-medium tracking-normal font-mono focus:outline-none transition-colors duration-150 cursor-pointer select-none">
+                    Headline
+                </button>
             </div>
 
-            <!-- Interactive Headline Trigger (Only hovering or clicking this text activates the reveal) -->
-            <button id="headline-trigger" type="button" aria-expanded="false" aria-controls="social-icons" class="textured-ink text-2xl sm:text-3xl font-semibold sm:font-medium tracking-normal font-mono focus:outline-none transition-colors duration-150 cursor-pointer select-none">
-                headline
+            <!-- Interactive Cat Image to the right of Headline -->
+            <button id="cat-trigger" type="button" aria-label="Interactive Cat" class="focus:outline-none cursor-pointer select-none flex items-center justify-center">
+                <img id="cat-img" src="images/cat1.jpg" alt="Cat" draggable="false" class="w-8 h-8 sm:w-9 sm:h-9 object-contain" />
             </button>
         </div>
     </header>
 
     <!-- MAIN CONTAINER - Pure Photo Collage Grid -->
     <main class="max-w-[1920px] mx-auto">
-        <!-- Masonry Grid Layout (Shortest-column placement: highest top border first, left tie-breaker) -->
+        <!-- Masonry Grid Layout -->
         <div id="gallery-grid" class="flex items-start gap-3 sm:gap-4 lg:gap-5">
             <!-- Columns & photos dynamically rendered via JavaScript -->
         </div>
     </main>
 
-    <!-- LIGHTBOX MODAL OVERLAY (Instant close without delay; solid #f9f8f5 blank background) -->
+    <!-- LIGHTBOX MODAL OVERLAY -->
     <div id="lightbox" class="fixed inset-0 z-50 bg-[#f9f8f5] opacity-0 pointer-events-none flex flex-col justify-between p-4 sm:p-6 select-none cursor-pointer overflow-hidden" aria-hidden="true" role="dialog">
        
         <!-- Lightbox Top Navigation Bar -->
@@ -167,17 +174,17 @@
             </button>
         </div>
 
-        <!-- Lightbox Main Stage (3-Panel Sliding Track + Arrow Buttons) -->
+        <!-- Lightbox Main Stage -->
         <div id="lightbox-stage" class="relative flex-1 min-h-0 w-full flex items-center justify-center my-2 sm:my-4 overflow-visible">
            
-            <!-- Previous Button (Hidden on vertical/portrait screens and on first image) -->
+            <!-- Previous Button -->
             <button id="lightbox-prev" class="hidden landscape:block absolute left-2 sm:left-4 z-20 p-3 text-zinc-600 hover:text-zinc-900 hover:bg-zinc-200/70 rounded-full transition-all duration-150 focus:outline-none backdrop-blur-sm" title="Previous Image (Left Arrow)">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7"></path>
                 </svg>
             </button>
 
-            <!-- Sliding Carousel Track: Prev (-100vw), Current (0), Next (+100vw) -->
+            <!-- Sliding Carousel Track -->
             <div id="lightbox-track" class="relative w-full h-full min-h-0 flex items-center justify-center will-change-transform">
                 <!-- Previous Slide -->
                 <div id="lightbox-slide-prev" class="absolute inset-0 -translate-x-[100vw] flex items-center justify-center pointer-events-none">
@@ -195,7 +202,7 @@
                 </div>
             </div>
 
-            <!-- Next Button (Hidden on vertical/portrait screens and on last image) -->
+            <!-- Next Button -->
             <button id="lightbox-next" class="hidden landscape:block absolute right-2 sm:right-4 z-20 p-3 text-zinc-600 hover:text-zinc-900 hover:bg-zinc-200/70 rounded-full transition-all duration-150 focus:outline-none backdrop-blur-sm" title="Next Image (Right Arrow)">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"></path>
@@ -210,79 +217,23 @@
     <!-- JAVASCRIPT LOGIC -->
     <script>
         /**
-         * Dates can be written as "dd.mm.yyyy" (e.g., "12.11.2026")
+         * Portfolio photo items sorted chronologically by date ("dd.mm.yyyy")
          */
         const photos = [
-            {
-                id: 14,
-                src: "images/DSCF8275 (3).jpg",
-                date: "09.11.2026"
-            },
-            {
-                id: 13,
-                src: "images/DSCF8639.jpg",
-                date: "09.11.2026"
-            },
-            {
-                id: 12,
-                src: "images/DSCF8539.jpg",
-                date: "09.11.2026"
-            },
-            {
-                id: 11,
-                src: "images/DSCF5177.jpg",
-                date: "04.08.2026"
-            },
-            {
-                id: 10,
-                src: "images/20261024_173313.jpg",
-                date: "24.10.2026"
-            },
-            {
-                id: 9,
-                src: "images/DSC05889.jpg",
-                date: "02.10.2026"
-            },
-            {
-                id: 8,
-                src: "images/DSCF6871.jpg",
-                date: "24.08.2026"
-            },
-            {
-                id: 7,
-                src: "images/DSCF6109.jpg",
-                date: "07.08.2026"
-            },
-            {
-                id: 6,
-                src: "images/Shared from Lightroom mobile.jpg",
-                date: "07.08.2026"
-            },
-            {
-                id: 5,
-                src: "images/DSCF5652.jpg",
-                date: "05.08.2026"
-            },
-            {
-                id: 4,
-                src: "images/DSCF5745.jpg",
-                date: "05.08.2026"
-            },
-            {
-                id: 3,
-                src: "images/DSCF5170.jpg",
-                date: "03.08.2026"
-            },
-            {
-                id: 2,
-                src: "images/DSCF4569.jpg",
-                date: "02.08.2026"
-            },
-            {
-                id: 1,
-                src: "images/DSCF4376.jpg",
-                date: "02.08.2026"
-            }
+            { id: 14, src: "images/DSCF8275 (3).jpg", date: "09.11.2026" },
+            { id: 13, src: "images/DSCF8639.jpg", date: "09.11.2026" },
+            { id: 12, src: "images/DSCF8539.jpg", date: "09.11.2026" },
+            { id: 11, src: "images/DSCF5177.jpg", date: "04.08.2026" },
+            { id: 10, src: "images/20261024_173313.jpg", date: "24.10.2026" },
+            { id: 9,  src: "images/DSC05889.jpg", date: "02.10.2026" },
+            { id: 8,  src: "images/DSCF6871.jpg", date: "24.08.2026" },
+            { id: 7,  src: "images/DSCF6109.jpg", date: "07.08.2026" },
+            { id: 6,  src: "images/Shared from Lightroom mobile.jpg", date: "07.08.2026" },
+            { id: 5,  src: "images/DSCF5652.jpg", date: "05.08.2026" },
+            { id: 4,  src: "images/DSCF5745.jpg", date: "05.08.2026" },
+            { id: 3,  src: "images/DSCF5170.jpg", date: "03.08.2026" },
+            { id: 2,  src: "images/DSCF4569.jpg", date: "02.08.2026" },
+            { id: 1,  src: "images/DSCF4376.jpg", date: "02.08.2026" }
         ];
 
         // Varied aspect ratios for preview fallbacks when local 'images/...' files are absent
@@ -309,6 +260,8 @@
         const headlineMenu = document.getElementById('headline-menu');
         const headlineTrigger = document.getElementById('headline-trigger');
         const socialIcons = document.getElementById('social-icons');
+        const catTrigger = document.getElementById('cat-trigger');
+        const catImg = document.getElementById('cat-img');
         const galleryGrid = document.getElementById('gallery-grid');
         const lightbox = document.getElementById('lightbox');
         const lightboxTopbar = document.getElementById('lightbox-topbar');
@@ -375,6 +328,87 @@
             }
         });
 
+        // Interactive Cat Image State Machine (cat1: default, cat2: hover, cat3: pressed down)
+        let isCatHovered = false;
+        let isCatPressed = false;
+        let isCatTouchActive = false;
+
+        function createCatFallbackSVG(state) {
+            const labels = { 1: 'cat1', 2: 'cat2', 3: 'cat3' };
+            const fills = { 1: '%23f4f4f5', 2: '%23e4e4e7', 3: '%23d4d4d8' };
+            const strokes = { 1: '%2318181b', 2: '%2371717a', 3: '%2318181b' };
+            const label = labels[state] || 'cat1';
+            const fill = fills[state] || '%23f4f4f5';
+            const stroke = strokes[state] || '%2318181b';
+            return `data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='8' fill='${fill}'/%3E%3Cpath d='M18 28 L22 14 L30 22 L34 22 L42 14 L46 28 C48 34 45 46 32 46 C19 46 16 34 18 28 Z' fill='none' stroke='${stroke}' stroke-width='2.5' stroke-linejoin='round'/%3E%3Ctext x='50%25' y='56' text-anchor='middle' font-family='monospace' font-size='10' fill='${stroke}'%3E${label}%3C/text%3E%3C/svg%3E`;
+        }
+
+        function updateCatImage() {
+            let state = 1;
+            if (isCatPressed) {
+                state = 3;
+            } else if (isCatHovered) {
+                state = 2;
+            }
+
+            const targetSrc = `images/cat${state}.jpg`;
+            catImg.onerror = function () {
+                this.onerror = null;
+                this.src = createCatFallbackSVG(state);
+            };
+            catImg.src = targetSrc;
+        }
+
+        // Mouse / Desktop hover and press-and-release handlers
+        catTrigger.addEventListener('mouseenter', () => {
+            if (isCatTouchActive) return;
+            isCatHovered = true;
+            updateCatImage();
+        });
+
+        catTrigger.addEventListener('mouseleave', () => {
+            if (isCatTouchActive) return;
+            isCatHovered = false;
+            updateCatImage();
+        });
+
+        catTrigger.addEventListener('mousedown', (e) => {
+            if (e.button !== 0 || isCatTouchActive) return;
+            isCatPressed = true;
+            updateCatImage();
+        });
+
+        // Listen on window so releasing the mouse button anywhere reverts properly
+        window.addEventListener('mouseup', () => {
+            if (!isCatPressed || isCatTouchActive) return;
+            isCatPressed = false;
+            updateCatImage();
+        });
+
+        // Mobile / Touch press-and-release handlers
+        catTrigger.addEventListener('touchstart', () => {
+            isCatTouchActive = true;
+            isCatPressed = true;
+            isCatHovered = false;
+            updateCatImage();
+        }, { passive: true });
+
+        const handleCatTouchEnd = () => {
+            if (!isCatTouchActive) return;
+            isCatPressed = false;
+            isCatHovered = false;
+            updateCatImage();
+            setTimeout(() => {
+                isCatTouchActive = false;
+            }, 350);
+        };
+
+        catTrigger.addEventListener('touchend', handleCatTouchEnd, { passive: true });
+        catTrigger.addEventListener('touchcancel', handleCatTouchEnd, { passive: true });
+
+        // Initialize default cat image with fallback support
+        updateCatImage();
+
         // Extract numerical index from filename or photo ID
         function getPhotoNumber(photo) {
             const src = photo.src || '';
@@ -383,7 +417,7 @@
             return typeof photo.id === 'number' ? photo.id : 0;
         }
 
-        // Parse date string (supports dd.mm.yyyy and yyyy.mm.dd) into a timestamp for sorting
+        // Parse date string into timestamp for sorting
         function parsePhotoDate(dateStr) {
             if (!dateStr) return 0;
             const parts = dateStr.trim().split(/[.\/-]/);
@@ -401,7 +435,7 @@
             return isNaN(fallback) ? 0 : fallback;
         }
 
-        // Always format date display as dd.mm.yyyy (e.g., 09.11.2026)
+        // Format date display as dd.mm.yyyy
         function formatDisplayDate(dateStr) {
             if (!dateStr) return '';
             const parts = dateStr.trim().split(/[.\/-]/);
@@ -417,7 +451,7 @@
             return dateStr;
         }
 
-        // Sort photos descending by date (most recent date first)
+        // Sort photos descending by date
         function sortPhotosDescending() {
             displayPhotos = [...photos].sort((a, b) => {
                 const dateA = parsePhotoDate(a.date);
@@ -429,16 +463,16 @@
             });
         }
 
-        // Determine responsive column count matching Tailwind breakpoints
+        // Responsive column count
         function getColumnCount() {
             const width = window.innerWidth;
-            if (width >= 1024) return 4; // lg
-            if (width >= 768) return 3;  // md
-            if (width >= 640) return 2;  // sm
+            if (width >= 1024) return 4;
+            if (width >= 768) return 3;
+            if (width >= 640) return 2;
             return 1;
         }
 
-        // Build card DOM nodes once in sorted chronological order
+        // Build card DOM nodes
         function buildPhotoCards() {
             sortPhotosDescending();
             photoCards = displayPhotos.map((photo, index) => {
@@ -451,7 +485,6 @@
                 img.alt = photo.alt || 'image';
                 img.className = 'w-full h-auto object-cover transition-all duration-150 group-hover:scale-[1.015] group-hover:opacity-95';
 
-                // Re-balance masonry columns whenever an image's height settles
                 img.addEventListener('load', scheduleRelayout);
                 img.addEventListener('error', function () {
                     const fallback = createFallbackSVG(index);
@@ -473,7 +506,6 @@
             });
         }
 
-        // Throttle layout recalculations to the next animation frame
         function scheduleRelayout() {
             if (layoutFramePending) return;
             layoutFramePending = true;
@@ -483,7 +515,6 @@
             });
         }
 
-        // Find the column whose bottom edge is highest (smallest offsetHeight).
         function getShortestColumnIndex(columns) {
             let shortestIndex = 0;
             let minHeight = columns[0].offsetHeight;
@@ -498,7 +529,6 @@
             return shortestIndex;
         }
 
-        // Render Masonry Grid placing each next-newest photo at the highest available top border
         function renderGallery(force = false) {
             const colCount = getColumnCount();
             if (!force && colCount === currentColCount) return;
@@ -510,7 +540,6 @@
 
             galleryGrid.innerHTML = '';
 
-            // Create column containers
             const columns = [];
             for (let i = 0; i < colCount; i++) {
                 const col = document.createElement('div');
@@ -519,14 +548,12 @@
                 columns.push(col);
             }
 
-            // Append each card into whichever column currently has the highest bottom edge
             photoCards.forEach((card) => {
                 const targetColIndex = getShortestColumnIndex(columns);
                 columns[targetColIndex].appendChild(card);
             });
         }
 
-        // Helper to bind image source without wrapping past first or last photo
         function assignSlideImage(slideContainer, imgEl, photoIndex) {
             const total = displayPhotos.length;
             if (!total || photoIndex < 0 || photoIndex >= total) {
@@ -546,7 +573,6 @@
             imgEl.alt = photo.alt || 'Portfolio Photograph';
         }
 
-        // Populate current, previous, and next slide images without looping at ends
         function updateLightboxSlides() {
             const hasPrev = currentIndex > 0;
             const hasNext = currentIndex < displayPhotos.length - 1;
@@ -562,14 +588,12 @@
             lightboxNext.style.pointerEvents = hasNext ? 'auto' : 'none';
         }
 
-        // Reset track position cleanly
         function resetTrackTransform() {
             lightboxTrack.style.transition = 'none';
             lightboxTrack.style.transform = 'translate3d(0px, 0px, 0)';
             lightboxTopbar.style.opacity = '1';
         }
 
-        // Lightbox Operations
         function openLightbox(index) {
             currentIndex = index;
             isSlideAnimating = false;
@@ -580,7 +604,6 @@
             lightbox.classList.add('opacity-100', 'pointer-events-auto');
             lightbox.setAttribute('aria-hidden', 'false');
 
-            // Enable pointer events on interactive child elements only while modal is open
             [lightboxTopbar, lightboxCard].forEach(el => {
                 el.classList.remove('pointer-events-none');
                 el.classList.add('pointer-events-auto');
@@ -589,13 +612,11 @@
             document.body.classList.add('modal-open');
         }
 
-        // Instant close with zero delay
         function closeLightbox() {
             lightbox.classList.remove('opacity-100', 'pointer-events-auto');
             lightbox.classList.add('opacity-0', 'pointer-events-none');
             lightbox.setAttribute('aria-hidden', 'true');
 
-            // Explicitly disable pointer events on child elements so hidden overlay never intercepts clicks
             [lightboxTopbar, lightboxPrev, lightboxNext, lightboxCard].forEach(el => {
                 el.classList.remove('pointer-events-auto');
                 el.classList.add('pointer-events-none');
@@ -609,7 +630,6 @@
             resetTrackTransform();
         }
 
-        // Slide smoothly to Next or Previous photo without looping past first or last image
         function slideToPhoto(direction) {
             if (isSlideAnimating || displayPhotos.length <= 1) return;
             if (direction === 'next' && currentIndex >= displayPhotos.length - 1) return;
@@ -660,7 +680,6 @@
             slideToPhoto('prev');
         }
 
-        // Smoothly slide the image vertically off-screen over the matching blank background until gone, then close immediately
         function slideOutVertically(directionY) {
             if (isSlideAnimating) return;
             isSlideAnimating = true;
@@ -715,12 +734,12 @@
             }
         });
 
-        // Mobile Interactive Touch Drag & Swipe (Protected against Pinch-to-Zoom & Panning while Zoomed)
+        // Mobile Interactive Touch Drag & Swipe
         let touchStartX = 0;
         let touchStartY = 0;
         let currentDeltaX = 0;
         let currentDeltaY = 0;
-        let dragAxis = null; // 'x' | 'y' | null
+        let dragAxis = null;
         let isDraggingSlide = false;
         let isPinchingOrMultiTouch = false;
         let lastMultiTouchEndTime = 0;
@@ -767,19 +786,16 @@
             currentDeltaX = e.touches[0].clientX - touchStartX;
             currentDeltaY = e.touches[0].clientY - touchStartY;
 
-            // Lock axis after a tiny initial movement so horizontal and vertical drags never conflict
             if (!dragAxis && (Math.abs(currentDeltaX) > 8 || Math.abs(currentDeltaY) > 8)) {
                 dragAxis = Math.abs(currentDeltaX) >= Math.abs(currentDeltaY) ? 'x' : 'y';
             }
 
             if (dragAxis === 'x') {
-                // Apply subtle rubber-band resistance if dragging past first or last image
                 const atStart = currentIndex === 0 && currentDeltaX > 0;
                 const atEnd = currentIndex === displayPhotos.length - 1 && currentDeltaX < 0;
                 const effectiveX = (atStart || atEnd) ? currentDeltaX * 0.25 : currentDeltaX;
                 lightboxTrack.style.transform = `translate3d(${effectiveX}px, 0px, 0)`;
             } else if (dragAxis === 'y') {
-                // Live 1:1 vertical drag over the clean blank background
                 lightboxTrack.style.transform = `translate3d(0px, ${currentDeltaY}px, 0)`;
                 const fadeRatio = Math.max(0, 1 - Math.abs(currentDeltaY) / 140);
                 lightboxTopbar.style.opacity = String(fadeRatio);
@@ -820,7 +836,6 @@
                 } else if (currentDeltaX > swipeThreshold && currentIndex > 0) {
                     slideToPhoto('prev');
                 } else {
-                    // Snap back smoothly if swipe didn't reach threshold or is at boundary
                     lightboxTrack.style.transition = 'transform 240ms cubic-bezier(0.22, 1, 0.36, 1)';
                     lightboxTrack.style.transform = 'translate3d(0px, 0px, 0)';
                 }
@@ -828,7 +843,6 @@
                 if (Math.abs(currentDeltaY) > swipeThreshold) {
                     slideOutVertically(currentDeltaY);
                 } else {
-                    // Snap back smoothly if vertical drag didn't reach dismiss threshold
                     lightboxTopbar.style.opacity = '1';
                     lightboxTrack.style.transition = 'transform 240ms cubic-bezier(0.22, 1, 0.36, 1)';
                     lightboxTrack.style.transform = 'translate3d(0px, 0px, 0)';
