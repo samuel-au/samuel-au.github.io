@@ -69,12 +69,12 @@
     </main>
 
     <!-- LIGHTBOX MODAL OVERLAY -->
-    <div id="lightbox" class="fixed inset-0 z-50 bg-white/95 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-200 flex flex-col justify-between p-4 sm:p-6 select-none cursor-pointer touch-none" aria-hidden="true" role="dialog">
+    <div id="lightbox" class="fixed inset-0 z-50 bg-white opacity-0 pointer-events-none transition-opacity duration-150 flex flex-col justify-between p-4 sm:p-6 select-none cursor-pointer touch-none" aria-hidden="true" role="dialog">
        
         <!-- Lightbox Top Navigation Bar -->
         <div id="lightbox-topbar" class="flex justify-end items-center z-10 w-full pointer-events-none">
-            <button id="lightbox-close" class="p-2 hover:text-zinc-900 focus:outline-none transition-colors duration-150 text-zinc-500 group" title="Close (Esc)">
-                <svg class="w-6 h-6 transform group-hover:scale-110 transition-transform duration-150" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <button id="lightbox-close" class="p-2 hover:text-zinc-900 focus:outline-none text-zinc-500" title="Close (Esc)">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12"></path>
                 </svg>
             </button>
@@ -83,8 +83,8 @@
         <!-- Lightbox Main Stage (Image Carousel + Arrow Buttons) -->
         <div id="lightbox-stage" class="relative flex-1 flex items-center justify-center my-4 overflow-hidden">
            
-            <!-- Previous Button (Hidden on vertical/portrait screens so image stays unobstructed; swipe still works) -->
-            <button id="lightbox-prev" class="hidden landscape:block absolute left-2 sm:left-4 z-20 p-3 text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100/80 rounded-full transition-colors duration-150 focus:outline-none backdrop-blur-sm" title="Previous Image (Left Arrow)">
+            <!-- Previous Button (Visible on mobile & desktop) -->
+            <button id="lightbox-prev" class="absolute left-2 sm:left-4 z-20 p-3 text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100/80 rounded-full focus:outline-none backdrop-blur-sm pointer-events-auto" title="Previous Image (Left Arrow)">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7"></path>
                 </svg>
@@ -108,8 +108,8 @@
                 </div>
             </div>
 
-            <!-- Next Button (Hidden on vertical/portrait screens so image stays unobstructed; swipe still works) -->
-            <button id="lightbox-next" class="hidden landscape:block absolute right-2 sm:right-4 z-20 p-3 text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100/80 rounded-full transition-colors duration-150 focus:outline-none backdrop-blur-sm" title="Next Image (Right Arrow)">
+            <!-- Next Button (Visible on mobile & desktop) -->
+            <button id="lightbox-next" class="absolute right-2 sm:right-4 z-20 p-3 text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100/80 rounded-full focus:outline-none backdrop-blur-sm pointer-events-auto" title="Next Image (Right Arrow)">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"></path>
                 </svg>
@@ -380,6 +380,30 @@
             return stageWidth + gap;
         }
 
+        // Helper to set an image slot cleanly without flashing a stale previous image while loading
+        function loadSlotImage(imgEl, photoObj, altFallback) {
+            if (imgEl.dataset.currentSrc === photoObj.src) return;
+            imgEl.dataset.currentSrc = photoObj.src;
+            imgEl.style.visibility = 'hidden';
+
+            const loader = new Image();
+            loader.onload = () => {
+                if (imgEl.dataset.currentSrc === photoObj.src) {
+                    imgEl.src = photoObj.src;
+                    imgEl.alt = photoObj.alt || altFallback;
+                    imgEl.style.visibility = 'visible';
+                }
+            };
+            loader.onerror = () => {
+                if (imgEl.dataset.currentSrc === photoObj.src) {
+                    imgEl.src = fallbackSVG;
+                    imgEl.alt = altFallback;
+                    imgEl.style.visibility = 'visible';
+                }
+            };
+            loader.src = photoObj.src;
+        }
+
         // Populate prev, current, and next slots so adjacent photos are already rendered side-by-side
         function syncCarouselSlots(index) {
             const slideDistance = getSlideDistance();
@@ -387,6 +411,7 @@
             // Center image
             const currPhoto = displayPhotos[index];
             if (currPhoto) {
+                lightboxImg.dataset.currentSrc = currPhoto.src;
                 lightboxImg.src = currPhoto.src;
                 lightboxImg.alt = currPhoto.alt || 'Portfolio Photograph';
                 lightboxImg.onerror = function() {
@@ -398,12 +423,7 @@
             // Previous image (positioned immediately to the left)
             if (index > 0) {
                 const prevPhotoObj = displayPhotos[index - 1];
-                lightboxImgPrev.src = prevPhotoObj.src;
-                lightboxImgPrev.alt = prevPhotoObj.alt || 'Previous Photograph';
-                lightboxImgPrev.onerror = function() {
-                    this.onerror = null;
-                    this.src = fallbackSVG;
-                };
+                loadSlotImage(lightboxImgPrev, prevPhotoObj, 'Previous Photograph');
                 lightboxSlotPrev.style.display = 'flex';
                 lightboxSlotPrev.style.transform = `translate3d(${-slideDistance}px, 0, 0)`;
             } else {
@@ -413,12 +433,7 @@
             // Next image (positioned immediately to the right)
             if (index < displayPhotos.length - 1) {
                 const nextPhotoObj = displayPhotos[index + 1];
-                lightboxImgNext.src = nextPhotoObj.src;
-                lightboxImgNext.alt = nextPhotoObj.alt || 'Next Photograph';
-                lightboxImgNext.onerror = function() {
-                    this.onerror = null;
-                    this.src = fallbackSVG;
-                };
+                loadSlotImage(lightboxImgNext, nextPhotoObj, 'Next Photograph');
                 lightboxSlotNext.style.display = 'flex';
                 lightboxSlotNext.style.transform = `translate3d(${slideDistance}px, 0, 0)`;
             } else {
@@ -452,10 +467,10 @@
         function openLightbox(index) {
             currentIndex = index;
             isAnimating = false;
-            
+           
             lightbox.style.transition = '';
             lightbox.style.opacity = '';
-            
+           
             lightbox.classList.remove('opacity-0', 'pointer-events-none');
             lightbox.classList.add('opacity-100', 'pointer-events-auto');
             lightbox.setAttribute('aria-hidden', 'false');
@@ -472,26 +487,28 @@
 
         /**
          * Closes the lightbox. If verticalDirection (-1 for swipe up, 1 for swipe down)
-         * is passed, glides the photo card off-screen vertically while fading the backdrop.
+         * is passed, slides the image completely off-screen against a solid blank white background
+         * with no fading until the image is gone.
          */
         function closeLightbox(verticalDirection = 0) {
             if (verticalDirection !== 0) {
                 if (isAnimating) return;
                 isAnimating = true;
-                const exitY = verticalDirection > 0 ? '42vh' : '-42vh';
+                const exitY = verticalDirection > 0 ? '100vh' : '-100vh';
 
-                lightboxCard.style.transition = 'transform 180ms linear';
-                lightboxCard.style.transform = `translate3d(0, ${exitY}, 0) scale(0.92)`;
-                lightboxImg.style.transition = 'opacity 160ms linear';
-                lightboxImg.style.opacity = '0';
+                // Keep neighboring horizontal slots hidden and backdrop solid white until image exits
+                lightboxSlotPrev.style.display = 'none';
+                lightboxSlotNext.style.display = 'none';
+                lightbox.style.transition = 'none';
+                lightbox.style.opacity = '1';
 
-                lightbox.style.transition = 'opacity 180ms linear';
-                lightbox.style.opacity = '0';
+                lightboxCard.style.transition = 'transform 190ms linear';
+                lightboxCard.style.transform = `translate3d(0, ${exitY}, 0)`;
 
                 setTimeout(() => {
                     finishCloseCleanup();
                     isAnimating = false;
-                }, 190);
+                }, 195);
             } else {
                 finishCloseCleanup();
             }
@@ -534,14 +551,7 @@
                 lightboxCard.style.transform = 'translate3d(0, 0, 0)';
                 syncCarouselSlots(currentIndex);
                 lightboxImg.style.transition = 'none';
-                lightboxImg.style.opacity = '0';
-
-                requestAnimationFrame(() => {
-                    requestAnimationFrame(() => {
-                        lightboxImg.style.transition = 'opacity 160ms linear';
-                        lightboxImg.style.opacity = '1';
-                    });
-                });
+                lightboxImg.style.opacity = '1';
                 return;
             }
 
@@ -606,7 +616,7 @@
             }
         });
 
-        // Interactive Mobile Touch Dragging & Swipe Gestures (Horizontal = Live Carousel, Vertical = Dismiss)
+        // Interactive Mobile Touch Dragging & Swipe Gestures (Horizontal = Live Carousel, Vertical = Solid Blank Dismiss)
         let touchStartX = 0;
         let touchStartY = 0;
         let touchCurrentX = 0;
@@ -636,6 +646,11 @@
             // Lock gesture axis once finger moves past jitter threshold
             if (gestureAxis === null && (Math.abs(deltaX) > 6 || Math.abs(deltaY) > 6)) {
                 gestureAxis = Math.abs(deltaX) > Math.abs(deltaY) ? 'horizontal' : 'vertical';
+                if (gestureAxis === 'vertical') {
+                    // Hide adjacent horizontal slots during vertical swipe so only the dragged image and blank white background show
+                    lightboxSlotPrev.style.display = 'none';
+                    lightboxSlotNext.style.display = 'none';
+                }
             }
 
             if (gestureAxis === 'horizontal') {
@@ -648,11 +663,10 @@
                 lightboxImg.style.opacity = '1';
             } else if (gestureAxis === 'vertical') {
                 touchCurrentY = e.touches[0].clientY;
-                const progress = Math.min(Math.abs(deltaY) / 260, 1);
-                const scale = 1 - progress * 0.08;
-                const bgOpacity = 1 - progress * 0.55;
-                lightboxCard.style.transform = `translate3d(0, ${deltaY * 0.9}px, 0) scale(${scale})`;
-                lightbox.style.opacity = `${bgOpacity}`;
+                // Keep solid blank white background with no fading while image tracks finger vertically
+                lightbox.style.opacity = '1';
+                lightboxImg.style.opacity = '1';
+                lightboxCard.style.transform = `translate3d(0, ${deltaY}px, 0)`;
             }
         }, { passive: true });
 
@@ -687,9 +701,12 @@
                     closeLightbox(deltaY > 0 ? 1 : -1);
                 } else {
                     lightboxCard.style.transition = 'transform 160ms linear';
-                    lightboxCard.style.transform = 'translate3d(0, 0, 0) scale(1)';
-                    lightbox.style.transition = 'opacity 160ms linear';
-                    lightbox.style.opacity = '1';
+                    lightboxCard.style.transform = 'translate3d(0, 0, 0)';
+                    setTimeout(() => {
+                        if (!isDragging && lightbox.classList.contains('opacity-100')) {
+                            syncCarouselSlots(currentIndex);
+                        }
+                    }, 165);
                 }
             }
         }, { passive: true });
@@ -705,3 +722,4 @@
     </script>
 </body>
 </html>
+```eof
