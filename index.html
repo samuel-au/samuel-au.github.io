@@ -161,11 +161,11 @@
         </div>
     </main>
 
-    <!-- LIGHTBOX MODAL OVERLAY (Solid #f9f8f5 blank background so vertical slide exit shows clean matching blank screen) -->
-    <div id="lightbox" class="fixed inset-0 z-50 bg-[#f9f8f5] opacity-0 pointer-events-none transition-opacity duration-200 flex flex-col justify-between p-4 sm:p-6 select-none cursor-pointer overflow-hidden" aria-hidden="true" role="dialog">
+    <!-- LIGHTBOX MODAL OVERLAY (Instant close without delay; solid #f9f8f5 blank background) -->
+    <div id="lightbox" class="fixed inset-0 z-50 bg-[#f9f8f5] opacity-0 pointer-events-none flex flex-col justify-between p-4 sm:p-6 select-none cursor-pointer overflow-hidden" aria-hidden="true" role="dialog">
        
         <!-- Lightbox Top Navigation Bar -->
-        <div id="lightbox-topbar" class="flex justify-end items-center z-20 w-full pointer-events-none transition-opacity duration-150">
+        <div id="lightbox-topbar" class="flex justify-end items-center z-20 w-full pointer-events-none">
             <button id="lightbox-close" class="p-2 hover:text-zinc-900 focus:outline-none transition-colors duration-150 text-zinc-500 group" title="Close (Esc)">
                 <svg class="w-6 h-6 transform group-hover:scale-110 transition-transform duration-150" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12"></path>
@@ -176,17 +176,17 @@
         <!-- Lightbox Main Stage (3-Panel Sliding Track + Arrow Buttons) -->
         <div id="lightbox-stage" class="relative flex-1 flex items-center justify-center my-4 overflow-visible">
            
-            <!-- Previous Button (Hidden on vertical/portrait screens so image stays unobstructed; swipe still works) -->
+            <!-- Previous Button (Hidden on vertical/portrait screens and on first image) -->
             <button id="lightbox-prev" class="hidden landscape:block absolute left-2 sm:left-4 z-20 p-3 text-zinc-600 hover:text-zinc-900 hover:bg-zinc-200/70 rounded-full transition-all duration-150 focus:outline-none backdrop-blur-sm" title="Previous Image (Left Arrow)">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7"></path>
                 </svg>
             </button>
 
-            <!-- Sliding Carousel Track: Prev (-100%), Current (0%), Next (+100%) -->
+            <!-- Sliding Carousel Track: Prev (-100vw), Current (0), Next (+100vw) -->
             <div id="lightbox-track" class="relative w-full h-full flex items-center justify-center will-change-transform">
                 <!-- Previous Slide -->
-                <div id="lightbox-slide-prev" class="absolute inset-0 -translate-x-full px-3 sm:px-8 flex items-center justify-center pointer-events-none">
+                <div id="lightbox-slide-prev" class="absolute inset-0 -translate-x-[100vw] px-3 sm:px-8 flex items-center justify-center pointer-events-none">
                     <img id="lightbox-img-prev" src="" alt="" class="max-w-full max-h-[85vh] object-contain shadow-xl" />
                 </div>
 
@@ -196,12 +196,12 @@
                 </div>
 
                 <!-- Next Slide -->
-                <div id="lightbox-slide-next" class="absolute inset-0 translate-x-full px-3 sm:px-8 flex items-center justify-center pointer-events-none">
+                <div id="lightbox-slide-next" class="absolute inset-0 translate-x-[100vw] px-3 sm:px-8 flex items-center justify-center pointer-events-none">
                     <img id="lightbox-img-next" src="" alt="" class="max-w-full max-h-[85vh] object-contain shadow-xl" />
                 </div>
             </div>
 
-            <!-- Next Button (Hidden on vertical/portrait screens so image stays unobstructed; swipe still works) -->
+            <!-- Next Button (Hidden on vertical/portrait screens and on last image) -->
             <button id="lightbox-next" class="hidden landscape:block absolute right-2 sm:right-4 z-20 p-3 text-zinc-600 hover:text-zinc-900 hover:bg-zinc-200/70 rounded-full transition-all duration-150 focus:outline-none backdrop-blur-sm" title="Next Image (Right Arrow)">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"></path>
@@ -319,6 +319,8 @@
         const lightbox = document.getElementById('lightbox');
         const lightboxTopbar = document.getElementById('lightbox-topbar');
         const lightboxTrack = document.getElementById('lightbox-track');
+        const lightboxSlidePrev = document.getElementById('lightbox-slide-prev');
+        const lightboxSlideNext = document.getElementById('lightbox-slide-next');
         const lightboxImg = document.getElementById('lightbox-img');
         const lightboxImgPrev = document.getElementById('lightbox-img-prev');
         const lightboxImgNext = document.getElementById('lightbox-img-next');
@@ -532,27 +534,40 @@
             });
         }
 
-        // Helper to bind image source with fallback
-        function assignSlideImage(imgEl, photoIndex) {
+        // Helper to bind image source without wrapping past first or last photo
+        function assignSlideImage(slideContainer, imgEl, photoIndex) {
             const total = displayPhotos.length;
-            if (!total) return;
-            const normalizedIndex = ((photoIndex % total) + total) % total;
-            const photo = displayPhotos[normalizedIndex];
-            if (!photo) return;
+            if (!total || photoIndex < 0 || photoIndex >= total) {
+                slideContainer.classList.add('invisible');
+                imgEl.removeAttribute('src');
+                imgEl.alt = '';
+                return;
+            }
 
+            slideContainer.classList.remove('invisible');
+            const photo = displayPhotos[photoIndex];
             imgEl.onerror = function() {
                 this.onerror = null;
-                this.src = createFallbackSVG(normalizedIndex);
+                this.src = createFallbackSVG(photoIndex);
             };
             imgEl.src = photo.src;
             imgEl.alt = photo.alt || 'Portfolio Photograph';
         }
 
-        // Populate current, previous, and next slide images so adjacent images are always ready mid-slide
+        // Populate current, previous, and next slide images without looping at ends
         function updateLightboxSlides() {
-            assignSlideImage(lightboxImg, currentIndex);
-            assignSlideImage(lightboxImgPrev, currentIndex - 1);
-            assignSlideImage(lightboxImgNext, currentIndex + 1);
+            const hasPrev = currentIndex > 0;
+            const hasNext = currentIndex < displayPhotos.length - 1;
+
+            assignSlideImage(lightboxCard, lightboxImg, currentIndex);
+            assignSlideImage(lightboxSlidePrev, lightboxImgPrev, hasPrev ? currentIndex - 1 : -1);
+            assignSlideImage(lightboxSlideNext, lightboxImgNext, hasNext ? currentIndex + 1 : -1);
+
+            lightboxPrev.style.visibility = hasPrev ? 'visible' : 'hidden';
+            lightboxPrev.style.pointerEvents = hasPrev ? 'auto' : 'none';
+
+            lightboxNext.style.visibility = hasNext ? 'visible' : 'hidden';
+            lightboxNext.style.pointerEvents = hasNext ? 'auto' : 'none';
         }
 
         // Reset track position cleanly
@@ -574,7 +589,7 @@
             lightbox.setAttribute('aria-hidden', 'false');
 
             // Enable pointer events on interactive child elements only while modal is open
-            [lightboxTopbar, lightboxPrev, lightboxNext, lightboxCard].forEach(el => {
+            [lightboxTopbar, lightboxCard].forEach(el => {
                 el.classList.remove('pointer-events-none');
                 el.classList.add('pointer-events-auto');
             });
@@ -582,6 +597,7 @@
             document.body.classList.add('modal-open');
         }
 
+        // Instant close with zero delay
         function closeLightbox() {
             lightbox.classList.remove('opacity-100', 'pointer-events-auto');
             lightbox.classList.add('opacity-0', 'pointer-events-none');
@@ -593,20 +609,23 @@
                 el.classList.add('pointer-events-none');
             });
 
+            lightboxPrev.style.visibility = '';
+            lightboxNext.style.visibility = '';
             document.body.classList.remove('modal-open');
 
-            setTimeout(() => {
-                isSlideAnimating = false;
-                resetTrackTransform();
-            }, 220);
+            isSlideAnimating = false;
+            resetTrackTransform();
         }
 
-        // Slide smoothly to Next or Previous photo with adjacent image visible mid-slide
+        // Slide smoothly to Next or Previous photo without looping past first or last image
         function slideToPhoto(direction) {
             if (isSlideAnimating || displayPhotos.length <= 1) return;
+            if (direction === 'next' && currentIndex >= displayPhotos.length - 1) return;
+            if (direction === 'prev' && currentIndex <= 0) return;
+
             isSlideAnimating = true;
 
-            const width = lightboxTrack.offsetWidth || window.innerWidth;
+            const width = window.innerWidth;
             const targetX = direction === 'next' ? -width : width;
 
             lightboxTrack.style.transition = 'transform 300ms cubic-bezier(0.22, 1, 0.36, 1)';
@@ -619,9 +638,9 @@
                 lightboxTrack.removeEventListener('transitionend', onEnd);
 
                 if (direction === 'next') {
-                    currentIndex = (currentIndex + 1) % displayPhotos.length;
+                    currentIndex += 1;
                 } else {
-                    currentIndex = (currentIndex - 1 + displayPhotos.length) % displayPhotos.length;
+                    currentIndex -= 1;
                 }
 
                 lightboxTrack.style.transition = 'none';
@@ -649,7 +668,7 @@
             slideToPhoto('prev');
         }
 
-        // Smoothly slide the image vertically off-screen over the matching blank background until gone
+        // Smoothly slide the image vertically off-screen over the matching blank background until gone, then close immediately
         function slideOutVertically(directionY) {
             if (isSlideAnimating) return;
             isSlideAnimating = true;
@@ -658,7 +677,7 @@
             const exitY = directionY >= 0 ? height : -height;
 
             lightboxTopbar.style.opacity = '0';
-            lightboxTrack.style.transition = 'transform 260ms cubic-bezier(0.22, 1, 0.36, 1)';
+            lightboxTrack.style.transition = 'transform 220ms cubic-bezier(0.22, 1, 0.36, 1)';
             lightboxTrack.style.transform = `translate3d(0px, ${exitY}px, 0)`;
 
             let finished = false;
@@ -674,7 +693,7 @@
             };
 
             lightboxTrack.addEventListener('transitionend', onEnd);
-            setTimeout(finishExit, 290);
+            setTimeout(finishExit, 240);
         }
 
         lightbox.addEventListener('click', (e) => {
@@ -762,8 +781,11 @@
             }
 
             if (dragAxis === 'x') {
-                // Live 1:1 horizontal drag revealing adjacent image mid-slide
-                lightboxTrack.style.transform = `translate3d(${currentDeltaX}px, 0px, 0)`;
+                // Apply subtle rubber-band resistance if dragging past first or last image
+                const atStart = currentIndex === 0 && currentDeltaX > 0;
+                const atEnd = currentIndex === displayPhotos.length - 1 && currentDeltaX < 0;
+                const effectiveX = (atStart || atEnd) ? currentDeltaX * 0.25 : currentDeltaX;
+                lightboxTrack.style.transform = `translate3d(${effectiveX}px, 0px, 0)`;
             } else if (dragAxis === 'y') {
                 // Live 1:1 vertical drag over the clean blank background
                 lightboxTrack.style.transform = `translate3d(0px, ${currentDeltaY}px, 0)`;
@@ -801,12 +823,12 @@
             const swipeThreshold = 55;
 
             if (dragAxis === 'x') {
-                if (currentDeltaX < -swipeThreshold) {
+                if (currentDeltaX < -swipeThreshold && currentIndex < displayPhotos.length - 1) {
                     slideToPhoto('next');
-                } else if (currentDeltaX > swipeThreshold) {
+                } else if (currentDeltaX > swipeThreshold && currentIndex > 0) {
                     slideToPhoto('prev');
                 } else {
-                    // Snap back smoothly if swipe didn't reach threshold
+                    // Snap back smoothly if swipe didn't reach threshold or is at boundary
                     lightboxTrack.style.transition = 'transform 240ms cubic-bezier(0.22, 1, 0.36, 1)';
                     lightboxTrack.style.transform = 'translate3d(0px, 0px, 0)';
                 }
