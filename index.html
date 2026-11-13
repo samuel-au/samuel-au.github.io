@@ -14,7 +14,8 @@
                 extend: {
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
-                        mono: ['Consolas', 'Courier New', 'monospace'],
+                        /* Consolas loads first on desktop; IBM Plex Mono acts as the mobile fallback instead of thin Courier New */
+                        mono: ['Consolas', '"IBM Plex Mono"', 'monospace'],
                     }
                 }
             }
@@ -23,7 +24,7 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         /* Prevent image context highlighting & smooth rendering */
         img {
@@ -72,11 +73,24 @@
             filter: url(#cardboard-ink-print);
         }
 
+        /* Mobile-only filter with slightly higher ink bleed so Retina/OLED screens match desktop stroke weight */
+        @media (max-width: 639px) {
+            .textured-ink {
+                filter: url(#cardboard-ink-print-mobile);
+            }
+        }
+
         /* Crisp off-white film date stamp with scanned print ink-bleed */
         .film-date-glow {
             color: #f4f4f5;
             text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
             filter: url(#cardboard-ink-print);
+        }
+
+        @media (max-width: 639px) {
+            .film-date-glow {
+                filter: url(#cardboard-ink-print-mobile);
+            }
         }
 
         /* Headline color: #71717a on direct hover for desktop, stays #71717a while icons are open on mobile */
@@ -94,18 +108,26 @@
     <!-- Subtle Scanned / 90s Outdoor Print Text & Icon Filter -->
     <svg class="sr-only" width="0" height="0" aria-hidden="true">
         <defs>
+            <!-- Desktop Filter (Original settings preserved) -->
             <filter id="cardboard-ink-print" x="-15%" y="-15%" width="130%" height="130%" color-interpolation-filters="sRGB">
-                <!-- 1. Fine analog print / paper grain -->
                 <feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="2" seed="14" result="printGrain" />
-                <!-- 2. Delicate optical / ink-spread blur for subtle corner rounding -->
                 <feGaussianBlur in="SourceGraphic" stdDeviation="0.38" result="softInk" />
-                <!-- 3. Very subtle organic paper-tooth edge variation -->
                 <feDisplacementMap in="softInk" in2="printGrain" scale="0.4" xChannelSelector="R" yChannelSelector="G" result="organicEdge" />
-                <!-- 4. Gentle photocopy alpha threshold for clean, slightly softened edges -->
                 <feComponentTransfer in="organicEdge" result="stampedShapes">
-                    <feFuncA type="linear" slope="1.9" intercept="-0.30" />
+                    <feFuncA type="linear" slope="2.0" intercept="-0.42" />
                 </feComponentTransfer>
-                <!-- 5. Subtle dry-ink print texture across the letterforms -->
+                <feColorMatrix in="printGrain" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0.14 0 0 0 0.9" result="inkTexture" />
+                <feComposite in="stampedShapes" in2="inkTexture" operator="in" />
+            </filter>
+
+            <!-- Mobile Filter (Softer threshold & slightly wider ink spread to prevent high-DPI thinning) -->
+            <filter id="cardboard-ink-print-mobile" x="-15%" y="-15%" width="130%" height="130%" color-interpolation-filters="sRGB">
+                <feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="2" seed="14" result="printGrain" />
+                <feGaussianBlur in="SourceGraphic" stdDeviation="0.45" result="softInk" />
+                <feDisplacementMap in="softInk" in2="printGrain" scale="0.4" xChannelSelector="R" yChannelSelector="G" result="organicEdge" />
+                <feComponentTransfer in="organicEdge" result="stampedShapes">
+                    <feFuncA type="linear" slope="1.9" intercept="-0.25" />
+                </feComponentTransfer>
                 <feColorMatrix in="printGrain" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0.14 0 0 0 0.9" result="inkTexture" />
                 <feComposite in="stampedShapes" in2="inkTexture" operator="in" />
             </filter>
@@ -141,8 +163,8 @@
                     </a>
                 </div>
 
-                <!-- Interactive Headline Trigger -->
-                <button id="headline-trigger" type="button" aria-expanded="false" aria-controls="social-icons" class="textured-ink text-2xl sm:text-3xl font-normal tracking-normal font-mono leading-none focus:outline-none transition-colors duration-150 cursor-pointer select-none">
+                <!-- Interactive Headline Trigger (font-medium on mobile only to match desktop Consolas thickness, font-normal on sm+ desktop) -->
+                <button id="headline-trigger" type="button" aria-expanded="false" aria-controls="social-icons" class="textured-ink text-2xl sm:text-3xl font-medium sm:font-normal tracking-normal font-mono leading-none focus:outline-none transition-colors duration-150 cursor-pointer select-none">
                     headline
                 </button>
             </div>
