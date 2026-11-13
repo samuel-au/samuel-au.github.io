@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="bg-white text-zinc-900">
+<html lang="en" class="bg-[#fcfcfb] text-zinc-900">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -42,7 +42,7 @@
             width: 8px;
         }
         ::-webkit-scrollbar-track {
-            background: #ffffff;
+            background: #fcfcfb;
         }
         ::-webkit-scrollbar-thumb {
             background: #e4e4e7;
@@ -51,13 +51,106 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #d4d4d8;
         }
+
+        /* Gentle, spotless woven paper / cardstock surface relief (no dark speckles) */
+        .paper-grain-bg {
+            position: fixed;
+            inset: 0;
+            z-index: 40;
+            pointer-events: none;
+            opacity: 0.35;
+            mix-blend-mode: soft-light;
+            background-image:
+                url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='paperRelief'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' seed='5' stitchTiles='stitch' result='noise'/%3E%3CfeDiffuseLighting in='noise' lighting-color='%23ffffff' surfaceScale='0.75'%3E%3CfeDistantLight azimuth='45' elevation='62'/%3E%3C/feDiffuseLighting%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23paperRelief)'/%3E%3C/svg%3E"),
+                linear-gradient(180deg, rgba(255, 255, 255, 0.25) 0%, rgba(235, 231, 223, 0.2) 100%);
+            background-repeat: repeat, no-repeat;
+            background-size: 160px 160px, 100% 100%;
+        }
+
+        /* Pronounced 90s scanned-print / photocopy ink-bleed texture on text & icons */
+        .textured-ink {
+            filter: url(#cardboard-ink-print);
+        }
+
+        /* Lighter warm orange film date glow with scanned print ink-bleed */
+        .film-date-glow {
+            color: #F58A3E;
+            filter: url(#cardboard-ink-print);
+            text-shadow:
+                0 0 6px rgba(245, 138, 62, 0.45),
+                0 1px 2px rgba(0, 0, 0, 0.45);
+        }
+
+        /* Headline color: hover-only on pointer/desktop devices, open-state-only on touch/mobile */
+        #headline-trigger {
+            color: #18181b;
+        }
+        @media (hover: hover) and (pointer: fine) {
+            #headline-trigger:hover {
+                color: #DC6B27;
+            }
+        }
+        #headline-trigger.mobile-active {
+            color: #DC6B27;
+        }
     </style>
 </head>
-<body class="min-h-screen bg-white font-sans antialiased selection:bg-zinc-200 selection:text-zinc-900 p-4 sm:p-6 lg:p-8">
+<body class="relative min-h-screen bg-[#f9f8f5] font-sans antialiased selection:bg-zinc-200 selection:text-zinc-900 p-4 sm:p-6 lg:p-8">
 
-    <!-- TOP HEADER WITH RIGHT ALIGNED HEADLINE -->
+    <!-- Subtle Scanned / 90s Outdoor Print Text & Icon Filter: Delicate ink-spread rounding + light analog print grain -->
+    <svg class="sr-only" width="0" height="0" aria-hidden="true">
+        <defs>
+            <filter id="cardboard-ink-print" x="-15%" y="-15%" width="130%" height="130%" color-interpolation-filters="sRGB">
+                <!-- 1. Fine analog print / paper grain -->
+                <feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="2" seed="14" result="printGrain" />
+                <!-- 2. Delicate optical / ink-spread blur for subtle corner rounding -->
+                <feGaussianBlur in="SourceGraphic" stdDeviation="0.38" result="softInk" />
+                <!-- 3. Very subtle organic paper-tooth edge variation -->
+                <feDisplacementMap in="softInk" in2="printGrain" scale="0.4" xChannelSelector="R" yChannelSelector="G" result="organicEdge" />
+                <!-- 4. Gentle photocopy alpha threshold for clean, slightly softened edges -->
+                <feComponentTransfer in="organicEdge" result="stampedShapes">
+                    <feFuncA type="linear" slope="2.0" intercept="-0.42" />
+                </feComponentTransfer>
+                <!-- 5. Subtle dry-ink print texture across the letterforms -->
+                <feColorMatrix in="printGrain" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0.14 0 0 0 0.9" result="inkTexture" />
+                <feComposite in="stampedShapes" in2="inkTexture" operator="in" />
+            </filter>
+        </defs>
+    </svg>
+
+    <!-- Subtle tactile paper relief texture over the canvas -->
+    <div class="paper-grain-bg" aria-hidden="true"></div>
+
+    <!-- TOP HEADER WITH RIGHT ALIGNED HEADLINE & REVEALABLE SOCIAL ICONS -->
     <header class="max-w-[1920px] mx-auto flex justify-end items-center mb-4 sm:mb-6 lg:mb-8">
-        <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" class="text-2xl sm:text-3xl font-medium tracking-normal text-zinc-900 font-mono hover:text-zinc-500 transition-colors duration-150" title="Visit Instagram">Headline</a>
+        <!-- Outer wrapper keeps icons open while moving cursor between Headline and revealed icons, without triggering hover prematurely -->
+        <div id="headline-menu" class="relative inline-flex items-center py-1 pl-2">
+            
+            <!-- Social Icons Container (Invisible & non-interactive until Headline is hovered or clicked) -->
+            <div id="social-icons" class="flex items-center gap-3.5 pr-4 invisible opacity-0 translate-x-2 pointer-events-none transition-all duration-200 ease-out">
+                
+                <!-- YouTube Icon Link -->
+                <a href="https://www.youtube.com/" target="_blank" rel="noopener noreferrer" aria-label="YouTube" title="YouTube" class="textured-ink p-1.5 text-zinc-900 hover:text-[#DC6B27] transition-colors duration-150">
+                    <svg class="w-5 h-5 sm:w-[22px] sm:h-[22px]" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                    </svg>
+                </a>
+
+                <!-- Instagram Icon Link -->
+                <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" title="Instagram" class="textured-ink p-1.5 text-zinc-900 hover:text-[#DC6B27] transition-colors duration-150">
+                    <svg class="w-5 h-5 sm:w-[22px] sm:h-[22px]" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+                        <rect width="20" height="20" x="2" y="2" rx="5" ry="5"></rect>
+                        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                        <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"></line>
+                    </svg>
+                </a>
+            </div>
+
+            <!-- Interactive Headline Trigger (Only hovering or clicking this text activates the reveal) -->
+            <button id="headline-trigger" type="button" aria-expanded="false" aria-controls="social-icons" class="textured-ink text-2xl sm:text-3xl font-medium tracking-normal font-mono focus:outline-none transition-colors duration-150 cursor-pointer select-none">
+                Headline
+            </button>
+        </div>
     </header>
 
     <!-- MAIN CONTAINER - Pure Photo Collage Grid -->
@@ -68,48 +161,48 @@
         </div>
     </main>
 
-    <!-- LIGHTBOX MODAL OVERLAY -->
-    <div id="lightbox" class="fixed inset-0 z-50 bg-white opacity-0 pointer-events-none transition-opacity duration-150 flex flex-col justify-between p-4 sm:p-6 select-none cursor-pointer touch-none" aria-hidden="true" role="dialog">
+    <!-- LIGHTBOX MODAL OVERLAY (Solid #f9f8f5 blank background so vertical slide exit shows clean matching blank screen) -->
+    <div id="lightbox" class="fixed inset-0 z-50 bg-[#f9f8f5] opacity-0 pointer-events-none transition-opacity duration-200 flex flex-col justify-between p-4 sm:p-6 select-none cursor-pointer overflow-hidden" aria-hidden="true" role="dialog">
        
         <!-- Lightbox Top Navigation Bar -->
-        <div id="lightbox-topbar" class="flex justify-end items-center z-10 w-full pointer-events-none">
-            <button id="lightbox-close" class="p-2 hover:text-zinc-900 focus:outline-none text-zinc-500" title="Close (Esc)">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div id="lightbox-topbar" class="flex justify-end items-center z-20 w-full pointer-events-none transition-opacity duration-150">
+            <button id="lightbox-close" class="p-2 hover:text-zinc-900 focus:outline-none transition-colors duration-150 text-zinc-500 group" title="Close (Esc)">
+                <svg class="w-6 h-6 transform group-hover:scale-110 transition-transform duration-150" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12"></path>
                 </svg>
             </button>
         </div>
 
-        <!-- Lightbox Main Stage (Image Carousel + Arrow Buttons) -->
-        <div id="lightbox-stage" class="relative flex-1 flex items-center justify-center my-4 overflow-hidden">
+        <!-- Lightbox Main Stage (3-Panel Sliding Track + Arrow Buttons) -->
+        <div id="lightbox-stage" class="relative flex-1 flex items-center justify-center my-4 overflow-visible">
            
-            <!-- Previous Button (Visible on mobile & desktop) -->
-            <button id="lightbox-prev" class="absolute left-2 sm:left-4 z-20 p-3 text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100/80 rounded-full focus:outline-none backdrop-blur-sm pointer-events-auto" title="Previous Image (Left Arrow)">
+            <!-- Previous Button (Hidden on vertical/portrait screens so image stays unobstructed; swipe still works) -->
+            <button id="lightbox-prev" class="hidden landscape:block absolute left-2 sm:left-4 z-20 p-3 text-zinc-600 hover:text-zinc-900 hover:bg-zinc-200/70 rounded-full transition-all duration-150 focus:outline-none backdrop-blur-sm" title="Previous Image (Left Arrow)">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7"></path>
                 </svg>
             </button>
 
-            <!-- Continuous 3-Slot Carousel Track (Prev | Active | Next) so adjacent photos are visible mid-swipe -->
-            <div id="lightbox-card" class="relative w-full h-full flex items-center justify-center cursor-default will-change-transform">
-                <!-- Previous Slide Slot -->
-                <div id="lightbox-slot-prev" class="absolute inset-0 flex items-center justify-center pointer-events-none">
-                    <img id="lightbox-img-prev" src="" alt="" draggable="false" class="max-w-full max-h-[85vh] object-contain shadow-xl select-none" />
+            <!-- Sliding Carousel Track: Prev (-100%), Current (0%), Next (+100%) -->
+            <div id="lightbox-track" class="relative w-full h-full flex items-center justify-center will-change-transform">
+                <!-- Previous Slide -->
+                <div id="lightbox-slide-prev" class="absolute inset-0 -translate-x-full px-3 sm:px-8 flex items-center justify-center pointer-events-none">
+                    <img id="lightbox-img-prev" src="" alt="" class="max-w-full max-h-[85vh] object-contain shadow-xl" />
                 </div>
 
-                <!-- Active Slide Slot -->
-                <div id="lightbox-slot-curr" class="relative max-w-full max-h-full flex items-center justify-center">
-                    <img id="lightbox-img" src="" alt="" draggable="false" class="max-w-full max-h-[85vh] object-contain shadow-xl opacity-0 cursor-default" />
+                <!-- Active Lightbox Photo Card -->
+                <div id="lightbox-card" class="relative w-full h-full px-3 sm:px-8 flex flex-col items-center justify-center select-text cursor-default">
+                    <img id="lightbox-img" src="" alt="" class="max-w-full max-h-[85vh] object-contain shadow-xl cursor-default" />
                 </div>
 
-                <!-- Next Slide Slot -->
-                <div id="lightbox-slot-next" class="absolute inset-0 flex items-center justify-center pointer-events-none">
-                    <img id="lightbox-img-next" src="" alt="" draggable="false" class="max-w-full max-h-[85vh] object-contain shadow-xl select-none" />
+                <!-- Next Slide -->
+                <div id="lightbox-slide-next" class="absolute inset-0 translate-x-full px-3 sm:px-8 flex items-center justify-center pointer-events-none">
+                    <img id="lightbox-img-next" src="" alt="" class="max-w-full max-h-[85vh] object-contain shadow-xl" />
                 </div>
             </div>
 
-            <!-- Next Button (Visible on mobile & desktop) -->
-            <button id="lightbox-next" class="absolute right-2 sm:right-4 z-20 p-3 text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100/80 rounded-full focus:outline-none backdrop-blur-sm pointer-events-auto" title="Next Image (Right Arrow)">
+            <!-- Next Button (Hidden on vertical/portrait screens so image stays unobstructed; swipe still works) -->
+            <button id="lightbox-next" class="hidden landscape:block absolute right-2 sm:right-4 z-20 p-3 text-zinc-600 hover:text-zinc-900 hover:bg-zinc-200/70 rounded-full transition-all duration-150 focus:outline-none backdrop-blur-sm" title="Next Image (Right Arrow)">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"></path>
                 </svg>
@@ -198,29 +291,95 @@
             }
         ];
 
-        const fallbackSVG = "data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='600' viewBox='0 0 800 600'%3E%3Crect width='800' height='600' fill='%23f4f4f5'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='monospace' font-size='16' fill='%23a1a1aa'%3EImage Unavailable%3C/text%3E%3C/svg%3E";
+        // Varied aspect ratios for preview fallbacks when local 'images/...' files are absent
+        const previewDimensions = [
+            [800, 1100], [1000, 750], [800, 1200], [1100, 800],
+            [850, 850],  [800, 1050], [1200, 800], [800, 1150],
+            [1000, 700], [800, 1000], [1100, 780], [800, 1180],
+            [950, 750],  [800, 1080]
+        ];
+
+        function createFallbackSVG(index = 0) {
+            const [w, h] = previewDimensions[index % previewDimensions.length];
+            return `data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='${w}' height='${h}' viewBox='0 0 ${w} ${h}'%3E%3Crect width='${w}' height='${h}' fill='%23f4f4f5'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='monospace' font-size='16' fill='%23a1a1aa'%3EPhoto ${index + 1}%3C/text%3E%3C/svg%3E`;
+        }
 
         let displayPhotos = [];
         let photoCards = [];
         let currentIndex = 0;
         let currentColCount = 0;
         let layoutFramePending = false;
-        let isAnimating = false;
+        let isSlideAnimating = false;
 
         // DOM Elements
+        const headlineMenu = document.getElementById('headline-menu');
+        const headlineTrigger = document.getElementById('headline-trigger');
+        const socialIcons = document.getElementById('social-icons');
         const galleryGrid = document.getElementById('gallery-grid');
         const lightbox = document.getElementById('lightbox');
-        const lightboxStage = document.getElementById('lightbox-stage');
         const lightboxTopbar = document.getElementById('lightbox-topbar');
+        const lightboxTrack = document.getElementById('lightbox-track');
         const lightboxImg = document.getElementById('lightbox-img');
         const lightboxImgPrev = document.getElementById('lightbox-img-prev');
         const lightboxImgNext = document.getElementById('lightbox-img-next');
-        const lightboxSlotPrev = document.getElementById('lightbox-slot-prev');
-        const lightboxSlotNext = document.getElementById('lightbox-slot-next');
         const lightboxClose = document.getElementById('lightbox-close');
         const lightboxPrev = document.getElementById('lightbox-prev');
         const lightboxNext = document.getElementById('lightbox-next');
         const lightboxCard = document.getElementById('lightbox-card');
+
+        // Headline & Social Icons Reveal Logic (Precise Hover + Click/Tap Toggle)
+        let isSocialMenuOpen = false;
+        let lastTouchTime = 0;
+
+        function isTouchInteraction() {
+            return (Date.now() - lastTouchTime < 800) || window.matchMedia('(hover: none), (pointer: coarse)').matches;
+        }
+
+        function setSocialMenuState(open) {
+            isSocialMenuOpen = open;
+            headlineTrigger.setAttribute('aria-expanded', String(open));
+
+            if (open) {
+                socialIcons.classList.remove('invisible', 'opacity-0', 'translate-x-2', 'pointer-events-none');
+                socialIcons.classList.add('visible', 'opacity-100', 'translate-x-0', 'pointer-events-auto');
+                if (isTouchInteraction()) {
+                    headlineTrigger.classList.add('mobile-active');
+                }
+            } else {
+                socialIcons.classList.remove('visible', 'opacity-100', 'translate-x-0', 'pointer-events-auto');
+                socialIcons.classList.add('invisible', 'opacity-0', 'translate-x-2', 'pointer-events-none');
+                headlineTrigger.classList.remove('mobile-active');
+            }
+        }
+
+        headlineTrigger.addEventListener('touchstart', () => {
+            lastTouchTime = Date.now();
+        }, { passive: true });
+
+        // Hovering directly over the "Headline" text reveals the icons
+        headlineTrigger.addEventListener('mouseenter', () => {
+            if (Date.now() - lastTouchTime < 500) return;
+            setSocialMenuState(true);
+        });
+
+        // Leaving the combined headline + icons area closes the menu
+        headlineMenu.addEventListener('mouseleave', () => {
+            if (Date.now() - lastTouchTime < 500) return;
+            setSocialMenuState(false);
+        });
+
+        // Clicking or tapping "Headline" toggles the icons open/closed
+        headlineTrigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            setSocialMenuState(!isSocialMenuOpen);
+        });
+
+        // Tapping/clicking anywhere outside closes the revealed icons
+        document.addEventListener('click', (e) => {
+            if (isSocialMenuOpen && !headlineMenu.contains(e.target)) {
+                setSocialMenuState(false);
+            }
+        });
 
         // Extract numerical index from filename or photo ID
         function getPhotoNumber(photo) {
@@ -248,7 +407,7 @@
             return isNaN(fallback) ? 0 : fallback;
         }
 
-        // Always format date display as dd.mm.yyyy
+        // Always format date display as dd.mm.yyyy (e.g., 09.11.2026)
         function formatDisplayDate(dateStr) {
             if (!dateStr) return '';
             const parts = dateStr.trim().split(/[.\/-]/);
@@ -301,15 +460,16 @@
                 // Re-balance masonry columns whenever an image's height settles
                 img.addEventListener('load', scheduleRelayout);
                 img.addEventListener('error', function () {
-                    if (this.src !== fallbackSVG) {
-                        this.src = fallbackSVG;
+                    const fallback = createFallbackSVG(index);
+                    if (this.src !== fallback) {
+                        this.src = fallback;
                     }
                     scheduleRelayout();
                 });
 
                 const overlay = document.createElement('div');
-                overlay.className = 'absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-150 flex items-end p-3 pointer-events-none';
-                overlay.innerHTML = `<span class="font-mono text-xs text-white/90 tracking-wide">${formattedDate}</span>`;
+                overlay.className = 'absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-150 flex items-end p-3 pointer-events-none';
+                overlay.innerHTML = `<span class="film-date-glow font-mono text-xs tracking-wide">${formattedDate}</span>`;
 
                 item.appendChild(img);
                 item.appendChild(overlay);
@@ -330,7 +490,6 @@
         }
 
         // Find the column whose bottom edge is highest (smallest offsetHeight).
-        // Strict `<` ensures left columns win automatically on equal height.
         function getShortestColumnIndex(columns) {
             let shortestIndex = 0;
             let minHeight = columns[0].offsetHeight;
@@ -373,103 +532,42 @@
             });
         }
 
-        // Calculate slide stride (stage width + small gap) so the adjacent image peeks immediately mid-swipe
-        function getSlideDistance() {
-            const stageWidth = lightboxStage.clientWidth || window.innerWidth;
-            const gap = window.innerWidth < 640 ? 16 : 32;
-            return stageWidth + gap;
-        }
+        // Helper to bind image source with fallback
+        function assignSlideImage(imgEl, photoIndex) {
+            const total = displayPhotos.length;
+            if (!total) return;
+            const normalizedIndex = ((photoIndex % total) + total) % total;
+            const photo = displayPhotos[normalizedIndex];
+            if (!photo) return;
 
-        // Helper to set an image slot cleanly without flashing a stale previous image while loading
-        function loadSlotImage(imgEl, photoObj, altFallback) {
-            if (imgEl.dataset.currentSrc === photoObj.src) return;
-            imgEl.dataset.currentSrc = photoObj.src;
-            imgEl.style.visibility = 'hidden';
-
-            const loader = new Image();
-            loader.onload = () => {
-                if (imgEl.dataset.currentSrc === photoObj.src) {
-                    imgEl.src = photoObj.src;
-                    imgEl.alt = photoObj.alt || altFallback;
-                    imgEl.style.visibility = 'visible';
-                }
+            imgEl.onerror = function() {
+                this.onerror = null;
+                this.src = createFallbackSVG(normalizedIndex);
             };
-            loader.onerror = () => {
-                if (imgEl.dataset.currentSrc === photoObj.src) {
-                    imgEl.src = fallbackSVG;
-                    imgEl.alt = altFallback;
-                    imgEl.style.visibility = 'visible';
-                }
-            };
-            loader.src = photoObj.src;
+            imgEl.src = photo.src;
+            imgEl.alt = photo.alt || 'Portfolio Photograph';
         }
 
-        // Populate prev, current, and next slots so adjacent photos are already rendered side-by-side
-        function syncCarouselSlots(index) {
-            const slideDistance = getSlideDistance();
-
-            // Center image
-            const currPhoto = displayPhotos[index];
-            if (currPhoto) {
-                lightboxImg.dataset.currentSrc = currPhoto.src;
-                lightboxImg.src = currPhoto.src;
-                lightboxImg.alt = currPhoto.alt || 'Portfolio Photograph';
-                lightboxImg.onerror = function() {
-                    this.onerror = null;
-                    this.src = fallbackSVG;
-                };
-            }
-
-            // Previous image (positioned immediately to the left)
-            if (index > 0) {
-                const prevPhotoObj = displayPhotos[index - 1];
-                loadSlotImage(lightboxImgPrev, prevPhotoObj, 'Previous Photograph');
-                lightboxSlotPrev.style.display = 'flex';
-                lightboxSlotPrev.style.transform = `translate3d(${-slideDistance}px, 0, 0)`;
-            } else {
-                lightboxSlotPrev.style.display = 'none';
-            }
-
-            // Next image (positioned immediately to the right)
-            if (index < displayPhotos.length - 1) {
-                const nextPhotoObj = displayPhotos[index + 1];
-                loadSlotImage(lightboxImgNext, nextPhotoObj, 'Next Photograph');
-                lightboxSlotNext.style.display = 'flex';
-                lightboxSlotNext.style.transform = `translate3d(${slideDistance}px, 0, 0)`;
-            } else {
-                lightboxSlotNext.style.display = 'none';
-            }
-
-            // Preload 2 steps ahead/behind for seamless continuous swiping
-            [index - 2, index + 2].forEach((idx) => {
-                if (idx >= 0 && idx < displayPhotos.length) {
-                    const preloader = new Image();
-                    preloader.src = displayPhotos[idx].src;
-                }
-            });
+        // Populate current, previous, and next slide images so adjacent images are always ready mid-slide
+        function updateLightboxSlides() {
+            assignSlideImage(lightboxImg, currentIndex);
+            assignSlideImage(lightboxImgPrev, currentIndex - 1);
+            assignSlideImage(lightboxImgNext, currentIndex + 1);
         }
 
-        // Update visibility/disabled state of navigation arrows at the first and last image
-        function updateNavigationBounds() {
-            const isFirst = currentIndex <= 0;
-            const isLast = currentIndex >= displayPhotos.length - 1;
-
-            lightboxPrev.classList.toggle('opacity-25', isFirst);
-            lightboxPrev.classList.toggle('cursor-default', isFirst);
-            lightboxPrev.disabled = isFirst;
-
-            lightboxNext.classList.toggle('opacity-25', isLast);
-            lightboxNext.classList.toggle('cursor-default', isLast);
-            lightboxNext.disabled = isLast;
+        // Reset track position cleanly
+        function resetTrackTransform() {
+            lightboxTrack.style.transition = 'none';
+            lightboxTrack.style.transform = 'translate3d(0px, 0px, 0)';
+            lightboxTopbar.style.opacity = '1';
         }
 
         // Lightbox Operations
         function openLightbox(index) {
             currentIndex = index;
-            isAnimating = false;
-           
-            lightbox.style.transition = '';
-            lightbox.style.opacity = '';
+            isSlideAnimating = false;
+            resetTrackTransform();
+            updateLightboxSlides();
            
             lightbox.classList.remove('opacity-0', 'pointer-events-none');
             lightbox.classList.add('opacity-100', 'pointer-events-auto');
@@ -482,46 +580,9 @@
             });
 
             document.body.classList.add('modal-open');
-            updateLightboxContent(0);
         }
 
-        /**
-         * Closes the lightbox. If verticalDirection (-1 for swipe up, 1 for swipe down)
-         * is passed, slides the image completely off-screen against a solid blank white background
-         * with no fading until the image is gone.
-         */
-        function closeLightbox(verticalDirection = 0) {
-            if (verticalDirection !== 0) {
-                if (isAnimating) return;
-                isAnimating = true;
-                const exitY = verticalDirection > 0 ? '100vh' : '-100vh';
-
-                // Keep neighboring horizontal slots hidden and backdrop solid white until image exits
-                lightboxSlotPrev.style.display = 'none';
-                lightboxSlotNext.style.display = 'none';
-                lightbox.style.transition = 'none';
-                lightbox.style.opacity = '1';
-
-                lightboxCard.style.transition = 'transform 190ms linear';
-                lightboxCard.style.transform = `translate3d(0, ${exitY}, 0)`;
-
-                setTimeout(() => {
-                    finishCloseCleanup();
-                    isAnimating = false;
-                }, 195);
-            } else {
-                finishCloseCleanup();
-            }
-        }
-
-        function finishCloseCleanup() {
-            lightbox.style.transition = '';
-            lightbox.style.opacity = '';
-            lightboxCard.style.transition = '';
-            lightboxCard.style.transform = '';
-            lightboxImg.style.transition = '';
-            lightboxImg.style.opacity = '0';
-
+        function closeLightbox() {
             lightbox.classList.remove('opacity-100', 'pointer-events-auto');
             lightbox.classList.add('opacity-0', 'pointer-events-none');
             lightbox.setAttribute('aria-hidden', 'true');
@@ -533,70 +594,97 @@
             });
 
             document.body.classList.remove('modal-open');
-        }
-
-        /**
-         * Continuous, un-slowed linear slide transition between side-by-side slots.
-         * direction: 1 (advance to next), -1 (go to prev), 0 (initial open)
-         */
-        function updateLightboxContent(direction = 0) {
-            const photo = displayPhotos[currentIndex];
-            if (!photo) return;
-
-            updateNavigationBounds();
-
-            // Initial modal open
-            if (direction === 0) {
-                lightboxCard.style.transition = 'none';
-                lightboxCard.style.transform = 'translate3d(0, 0, 0)';
-                syncCarouselSlots(currentIndex);
-                lightboxImg.style.transition = 'none';
-                lightboxImg.style.opacity = '1';
-                return;
-            }
-
-            if (isAnimating) return;
-            isAnimating = true;
-
-            const slideDistance = getSlideDistance();
-            const targetX = direction > 0 ? -slideDistance : slideDistance;
-
-            // Slide the continuous 3-slot track smoothly at constant (linear) speed without any slowdown curve
-            lightboxImg.style.transition = 'none';
-            lightboxImg.style.opacity = '1';
-            lightboxCard.style.transition = 'transform 190ms linear';
-            lightboxCard.style.transform = `translate3d(${targetX}px, 0, 0)`;
 
             setTimeout(() => {
-                // Snap track back to 0 and shift the slots so the new active image is centered
-                lightboxCard.style.transition = 'none';
-                lightboxCard.style.transform = 'translate3d(0, 0, 0)';
-                syncCarouselSlots(currentIndex);
-                isAnimating = false;
-            }, 195);
+                isSlideAnimating = false;
+                resetTrackTransform();
+            }, 220);
+        }
+
+        // Slide smoothly to Next or Previous photo with adjacent image visible mid-slide
+        function slideToPhoto(direction) {
+            if (isSlideAnimating || displayPhotos.length <= 1) return;
+            isSlideAnimating = true;
+
+            const width = lightboxTrack.offsetWidth || window.innerWidth;
+            const targetX = direction === 'next' ? -width : width;
+
+            lightboxTrack.style.transition = 'transform 300ms cubic-bezier(0.22, 1, 0.36, 1)';
+            lightboxTrack.style.transform = `translate3d(${targetX}px, 0px, 0)`;
+
+            let finished = false;
+            const finishSlide = () => {
+                if (finished) return;
+                finished = true;
+                lightboxTrack.removeEventListener('transitionend', onEnd);
+
+                if (direction === 'next') {
+                    currentIndex = (currentIndex + 1) % displayPhotos.length;
+                } else {
+                    currentIndex = (currentIndex - 1 + displayPhotos.length) % displayPhotos.length;
+                }
+
+                lightboxTrack.style.transition = 'none';
+                updateLightboxSlides();
+                lightboxTrack.style.transform = 'translate3d(0px, 0px, 0)';
+                void lightboxTrack.offsetWidth;
+                isSlideAnimating = false;
+            };
+
+            const onEnd = (e) => {
+                if (e.target === lightboxTrack) finishSlide();
+            };
+
+            lightboxTrack.addEventListener('transitionend', onEnd);
+            setTimeout(finishSlide, 330);
         }
 
         function nextPhoto(e) {
             if (e) e.stopPropagation();
-            if (isAnimating || currentIndex >= displayPhotos.length - 1) return;
-            currentIndex += 1;
-            updateLightboxContent(1);
+            slideToPhoto('next');
         }
 
         function prevPhoto(e) {
             if (e) e.stopPropagation();
-            if (isAnimating || currentIndex <= 0) return;
-            currentIndex -= 1;
-            updateLightboxContent(-1);
+            slideToPhoto('prev');
+        }
+
+        // Smoothly slide the image vertically off-screen over the matching blank background until gone
+        function slideOutVertically(directionY) {
+            if (isSlideAnimating) return;
+            isSlideAnimating = true;
+
+            const height = window.innerHeight;
+            const exitY = directionY >= 0 ? height : -height;
+
+            lightboxTopbar.style.opacity = '0';
+            lightboxTrack.style.transition = 'transform 260ms cubic-bezier(0.22, 1, 0.36, 1)';
+            lightboxTrack.style.transform = `translate3d(0px, ${exitY}px, 0)`;
+
+            let finished = false;
+            const finishExit = () => {
+                if (finished) return;
+                finished = true;
+                lightboxTrack.removeEventListener('transitionend', onEnd);
+                closeLightbox();
+            };
+
+            const onEnd = (e) => {
+                if (e.target === lightboxTrack) finishExit();
+            };
+
+            lightboxTrack.addEventListener('transitionend', onEnd);
+            setTimeout(finishExit, 290);
         }
 
         lightbox.addEventListener('click', (e) => {
-            if (justSwiped) return;
+            if (isSlideAnimating) return;
             const isClickInsideImg = lightboxImg.contains(e.target);
             const isClickInsidePrev = lightboxPrev.contains(e.target);
             const isClickInsideNext = lightboxNext.contains(e.target);
+            const isClickInsideClose = lightboxClose.contains(e.target);
            
-            if (!isClickInsideImg && !isClickInsidePrev && !isClickInsideNext) {
+            if (!isClickInsideImg && !isClickInsidePrev && !isClickInsideNext && !isClickInsideClose) {
                 closeLightbox();
             }
         });
@@ -616,110 +704,129 @@
             }
         });
 
-        // Interactive Mobile Touch Dragging & Swipe Gestures (Horizontal = Live Carousel, Vertical = Solid Blank Dismiss)
+        // Mobile Interactive Touch Drag & Swipe (Protected against Pinch-to-Zoom & Panning while Zoomed)
         let touchStartX = 0;
         let touchStartY = 0;
-        let touchCurrentX = 0;
-        let touchCurrentY = 0;
-        let isDragging = false;
-        let gestureAxis = null; // 'horizontal' | 'vertical' | null
-        let justSwiped = false;
+        let currentDeltaX = 0;
+        let currentDeltaY = 0;
+        let dragAxis = null; // 'x' | 'y' | null
+        let isDraggingSlide = false;
+        let isPinchingOrMultiTouch = false;
+        let lastMultiTouchEndTime = 0;
+
+        function getViewportScale() {
+            return window.visualViewport ? window.visualViewport.scale : 1;
+        }
 
         lightbox.addEventListener('touchstart', (e) => {
-            if (isAnimating || e.touches.length !== 1) return;
-            touchStartX = e.touches[0].clientX;
-            touchStartY = e.touches[0].clientY;
-            touchCurrentX = touchStartX;
-            touchCurrentY = touchStartY;
-            isDragging = true;
-            gestureAxis = null;
-            lightboxCard.style.transition = 'none';
-            lightboxImg.style.transition = 'none';
-            lightbox.style.transition = 'none';
+            if (isSlideAnimating) return;
+
+            if (e.touches.length > 1 || getViewportScale() > 1.02) {
+                isPinchingOrMultiTouch = true;
+                isDraggingSlide = false;
+                dragAxis = null;
+                resetTrackTransform();
+                return;
+            }
+
+            if (e.touches.length === 1 && (Date.now() - lastMultiTouchEndTime >= 350)) {
+                touchStartX = e.touches[0].clientX;
+                touchStartY = e.touches[0].clientY;
+                currentDeltaX = 0;
+                currentDeltaY = 0;
+                dragAxis = null;
+                isDraggingSlide = true;
+                lightboxTrack.style.transition = 'none';
+            }
         }, { passive: true });
 
         lightbox.addEventListener('touchmove', (e) => {
-            if (!isDragging || e.touches.length !== 1) return;
-            const deltaX = e.touches[0].clientX - touchStartX;
-            const deltaY = e.touches[0].clientY - touchStartY;
-
-            // Lock gesture axis once finger moves past jitter threshold
-            if (gestureAxis === null && (Math.abs(deltaX) > 6 || Math.abs(deltaY) > 6)) {
-                gestureAxis = Math.abs(deltaX) > Math.abs(deltaY) ? 'horizontal' : 'vertical';
-                if (gestureAxis === 'vertical') {
-                    // Hide adjacent horizontal slots during vertical swipe so only the dragged image and blank white background show
-                    lightboxSlotPrev.style.display = 'none';
-                    lightboxSlotNext.style.display = 'none';
+            if (e.touches.length > 1 || getViewportScale() > 1.02) {
+                isPinchingOrMultiTouch = true;
+                if (isDraggingSlide) {
+                    isDraggingSlide = false;
+                    dragAxis = null;
+                    resetTrackTransform();
                 }
+                return;
             }
 
-            if (gestureAxis === 'horizontal') {
-                touchCurrentX = e.touches[0].clientX;
-                const atStart = currentIndex <= 0 && deltaX > 0;
-                const atEnd = currentIndex >= displayPhotos.length - 1 && deltaX < 0;
-                // 1:1 finger tracking so adjacent image enters immediately; rubber-band at first/last edges
-                const dragFactor = (atStart || atEnd) ? 0.25 : 1;
-                lightboxCard.style.transform = `translate3d(${deltaX * dragFactor}px, 0, 0)`;
-                lightboxImg.style.opacity = '1';
-            } else if (gestureAxis === 'vertical') {
-                touchCurrentY = e.touches[0].clientY;
-                // Keep solid blank white background with no fading while image tracks finger vertically
-                lightbox.style.opacity = '1';
-                lightboxImg.style.opacity = '1';
-                lightboxCard.style.transform = `translate3d(0, ${deltaY}px, 0)`;
+            if (!isDraggingSlide || isPinchingOrMultiTouch || e.touches.length !== 1) return;
+
+            currentDeltaX = e.touches[0].clientX - touchStartX;
+            currentDeltaY = e.touches[0].clientY - touchStartY;
+
+            // Lock axis after a tiny initial movement so horizontal and vertical drags never conflict
+            if (!dragAxis && (Math.abs(currentDeltaX) > 8 || Math.abs(currentDeltaY) > 8)) {
+                dragAxis = Math.abs(currentDeltaX) >= Math.abs(currentDeltaY) ? 'x' : 'y';
+            }
+
+            if (dragAxis === 'x') {
+                // Live 1:1 horizontal drag revealing adjacent image mid-slide
+                lightboxTrack.style.transform = `translate3d(${currentDeltaX}px, 0px, 0)`;
+            } else if (dragAxis === 'y') {
+                // Live 1:1 vertical drag over the clean blank background
+                lightboxTrack.style.transform = `translate3d(0px, ${currentDeltaY}px, 0)`;
+                const fadeRatio = Math.max(0, 1 - Math.abs(currentDeltaY) / 140);
+                lightboxTopbar.style.opacity = String(fadeRatio);
             }
         }, { passive: true });
 
-        lightbox.addEventListener('touchend', () => {
-            if (!isDragging) return;
-            isDragging = false;
+        lightbox.addEventListener('touchend', (e) => {
+            if (e.touches.length > 0) {
+                isPinchingOrMultiTouch = true;
+                lastMultiTouchEndTime = Date.now();
+                return;
+            }
 
-            const deltaX = touchCurrentX - touchStartX;
-            const deltaY = touchCurrentY - touchStartY;
-            const horizontalThreshold = 45;
-            const verticalDismissThreshold = 75;
+            if (isPinchingOrMultiTouch) {
+                isPinchingOrMultiTouch = false;
+                isDraggingSlide = false;
+                dragAxis = null;
+                lastMultiTouchEndTime = Date.now();
+                resetTrackTransform();
+                return;
+            }
 
-            if (gestureAxis === 'horizontal') {
-                justSwiped = true;
-                setTimeout(() => { justSwiped = false; }, 220);
+            if (getViewportScale() > 1.02 || (Date.now() - lastMultiTouchEndTime < 350)) {
+                isDraggingSlide = false;
+                dragAxis = null;
+                resetTrackTransform();
+                return;
+            }
 
-                if (deltaX < -horizontalThreshold && currentIndex < displayPhotos.length - 1) {
-                    nextPhoto();
-                } else if (deltaX > horizontalThreshold && currentIndex > 0) {
-                    prevPhoto();
+            if (!isDraggingSlide) return;
+            isDraggingSlide = false;
+
+            const swipeThreshold = 55;
+
+            if (dragAxis === 'x') {
+                if (currentDeltaX < -swipeThreshold) {
+                    slideToPhoto('next');
+                } else if (currentDeltaX > swipeThreshold) {
+                    slideToPhoto('prev');
                 } else {
-                    // Return to center at uniform linear speed
-                    lightboxCard.style.transition = 'transform 160ms linear';
-                    lightboxCard.style.transform = 'translate3d(0, 0, 0)';
-                    lightboxImg.style.opacity = '1';
+                    // Snap back smoothly if swipe didn't reach threshold
+                    lightboxTrack.style.transition = 'transform 240ms cubic-bezier(0.22, 1, 0.36, 1)';
+                    lightboxTrack.style.transform = 'translate3d(0px, 0px, 0)';
                 }
-            } else if (gestureAxis === 'vertical') {
-                justSwiped = true;
-                setTimeout(() => { justSwiped = false; }, 220);
-
-                if (Math.abs(deltaY) > verticalDismissThreshold) {
-                    closeLightbox(deltaY > 0 ? 1 : -1);
+            } else if (dragAxis === 'y') {
+                if (Math.abs(currentDeltaY) > swipeThreshold) {
+                    slideOutVertically(currentDeltaY);
                 } else {
-                    lightboxCard.style.transition = 'transform 160ms linear';
-                    lightboxCard.style.transform = 'translate3d(0, 0, 0)';
-                    setTimeout(() => {
-                        if (!isDragging && lightbox.classList.contains('opacity-100')) {
-                            syncCarouselSlots(currentIndex);
-                        }
-                    }, 165);
+                    // Snap back smoothly if vertical drag didn't reach dismiss threshold
+                    lightboxTopbar.style.opacity = '1';
+                    lightboxTrack.style.transition = 'transform 240ms cubic-bezier(0.22, 1, 0.36, 1)';
+                    lightboxTrack.style.transform = 'translate3d(0px, 0px, 0)';
                 }
             }
+
+            dragAxis = null;
         }, { passive: true });
 
         // Initialize Gallery on Load & Re-layout on Screen Resize
         window.addEventListener('DOMContentLoaded', () => renderGallery(true));
-        window.addEventListener('resize', () => {
-            renderGallery(false);
-            if (lightbox.classList.contains('opacity-100') && !isAnimating) {
-                syncCarouselSlots(currentIndex);
-            }
-        });
+        window.addEventListener('resize', () => renderGallery(false));
     </script>
 </body>
 </html>
-```eof
