@@ -239,36 +239,50 @@
     <!-- JAVASCRIPT LOGIC -->
     <script>
         /**
-         * Portfolio photo items sorted chronologically by date ("dd.mm.yyyy")
+         * =========================================================================
+         * ADD NEW PHOTOS HERE
+         * Just add a new entry in any order (they are automatically sorted newest-first).
+         * Supported formats:
+         *   1. { src: "images/your-photo.jpg", date: "dd.mm.yyyy" }
+         *   2. "images/your-photo.jpg | dd.mm.yyyy"
+         * =========================================================================
          */
         const photos = [
-            { id: 14, src: "images/DSCF8275 (3).jpg", date: "09.11.2026" },
-            { id: 13, src: "images/DSCF8639.jpg", date: "09.11.2026" },
-            { id: 12, src: "images/DSCF8539.jpg", date: "09.11.2026" },
-            { id: 11, src: "images/DSCF5177.jpg", date: "04.08.2026" },
-            { id: 10, src: "images/20261024_173313.jpg", date: "24.10.2026" },
-            { id: 9,  src: "images/DSC05889.jpg", date: "02.10.2026" },
-            { id: 8,  src: "images/DSCF6871.jpg", date: "24.08.2026" },
-            { id: 7,  src: "images/DSCF6109.jpg", date: "07.08.2026" },
-            { id: 6,  src: "images/Shared from Lightroom mobile.jpg", date: "07.08.2026" },
-            { id: 5,  src: "images/DSCF5652.jpg", date: "05.08.2026" },
-            { id: 4,  src: "images/DSCF5745.jpg", date: "05.08.2026" },
-            { id: 3,  src: "images/DSCF5170.jpg", date: "03.08.2026" },
-            { id: 2,  src: "images/DSCF4569.jpg", date: "02.08.2026" },
-            { id: 1,  src: "images/DSCF4376.jpg", date: "02.08.2026" }
+            { src: "images/DSCF8275 (3).jpg", date: "09.11.2026" },
+            { src: "images/DSCF8639.jpg", date: "09.11.2026" },
+            { src: "images/DSCF8539.jpg", date: "09.11.2026" },
+            { src: "images/DSCF5177.jpg", date: "04.08.2026" },
+            { src: "images/20261024_173313.jpg", date: "24.10.2026" },
+            { src: "images/DSC05889.jpg", date: "02.10.2026" },
+            { src: "images/DSCF6871.jpg", date: "24.08.2026" },
+            { src: "images/DSCF6109.jpg", date: "07.08.2026" },
+            { src: "images/Shared from Lightroom mobile.jpg", date: "07.08.2026" },
+            { src: "images/DSCF5652.jpg", date: "05.08.2026" },
+            { src: "images/DSCF5745.jpg", date: "05.08.2026" },
+            { src: "images/DSCF5170.jpg", date: "03.08.2026" },
+            { src: "images/DSCF4569.jpg", date: "02.08.2026" },
+            { src: "images/DSCF4376.jpg", date: "02.08.2026" }
         ];
 
-        // Varied aspect ratios for preview fallbacks when local 'images/...' files are absent
-        const previewDimensions = [
-            [800, 1100], [1000, 750], [800, 1200], [1100, 800],
-            [850, 850],  [800, 1050], [1200, 800], [800, 1150],
-            [1000, 700], [800, 1000], [1100, 780], [800, 1180],
-            [950, 750],  [800, 1080]
-        ];
+        // Constant fallback dimensions used only if a local image file isn't found
+        const PREVIEW_FALLBACK_DIMENSIONS = [800, 1000];
 
         function createFallbackSVG(index = 0) {
-            const [w, h] = previewDimensions[index % previewDimensions.length];
+            const [w, h] = PREVIEW_FALLBACK_DIMENSIONS;
             return `data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='${w}' height='${h}' viewBox='0 0 ${w} ${h}'%3E%3Crect width='${w}' height='${h}' fill='%23f4f4f5'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='monospace' font-size='16' fill='%23a1a1aa'%3EPhoto ${index + 1}%3C/text%3E%3C/svg%3E`;
+        }
+
+        function normalizePhotoItem(entry, fallbackOrder) {
+            if (typeof entry === 'string') {
+                const [srcPart, datePart = ''] = entry.split('|').map(s => s.trim());
+                return { src: srcPart, date: datePart, order: fallbackOrder };
+            }
+            return {
+                src: entry.src || '',
+                date: entry.date || '',
+                alt: entry.alt || '',
+                order: fallbackOrder
+            };
         }
 
         let displayPhotos = [];
@@ -438,12 +452,12 @@
         // Initialize default cat PNG image with transparent fallback support
         updateCatImage();
 
-        // Extract numerical index from filename or photo ID
+        // Extract numerical index from filename or fallback list position
         function getPhotoNumber(photo) {
             const src = photo.src || '';
             const match = src.match(/(\d+)(?=[^\d]*$)/) || src.match(/(\d+)/);
             if (match) return parseInt(match[1], 10);
-            return typeof photo.id === 'number' ? photo.id : 0;
+            return photo.order || 0;
         }
 
         // Parse date string into timestamp for sorting
@@ -482,14 +496,16 @@
 
         // Sort photos descending by date
         function sortPhotosDescending() {
-            displayPhotos = [...photos].sort((a, b) => {
-                const dateA = parsePhotoDate(a.date);
-                const dateB = parsePhotoDate(b.date);
-                if (dateB !== dateA) {
-                    return dateB - dateA;
-                }
-                return getPhotoNumber(b) - getPhotoNumber(a);
-            });
+            displayPhotos = photos
+                .map((entry, idx) => normalizePhotoItem(entry, photos.length - idx))
+                .sort((a, b) => {
+                    const dateA = parsePhotoDate(a.date);
+                    const dateB = parsePhotoDate(b.date);
+                    if (dateB !== dateA) {
+                        return dateB - dateA;
+                    }
+                    return getPhotoNumber(b) - getPhotoNumber(a);
+                });
         }
 
         // Responsive column count
