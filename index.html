@@ -667,6 +667,9 @@
                 } else {
                     prevPhoto();
                 }
+            } else if (Math.abs(deltaY) > swipeThreshold && Math.abs(deltaY) > Math.abs(deltaX) * 1.2) {
+                // Swipe up or down closes the lightbox (only reached at 1x scale without multi-touch/pinch)
+                closeLightbox();
             }
         }
 
