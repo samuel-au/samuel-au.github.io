@@ -120,13 +120,13 @@
                 <feComposite in="stampedShapes" in2="inkTexture" operator="in" />
             </filter>
 
-            <!-- Mobile Filter (Softer threshold & slightly wider ink spread to prevent high-DPI thinning) -->
+            <!-- Mobile Filter (Balanced ink bleed so mobile is slightly thinner while still matching desktop weight) -->
             <filter id="cardboard-ink-print-mobile" x="-15%" y="-15%" width="130%" height="130%" color-interpolation-filters="sRGB">
                 <feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="2" seed="14" result="printGrain" />
-                <feGaussianBlur in="SourceGraphic" stdDeviation="0.45" result="softInk" />
+                <feGaussianBlur in="SourceGraphic" stdDeviation="0.40" result="softInk" />
                 <feDisplacementMap in="softInk" in2="printGrain" scale="0.4" xChannelSelector="R" yChannelSelector="G" result="organicEdge" />
                 <feComponentTransfer in="organicEdge" result="stampedShapes">
-                    <feFuncA type="linear" slope="1.9" intercept="-0.25" />
+                    <feFuncA type="linear" slope="1.95" intercept="-0.33" />
                 </feComponentTransfer>
                 <feColorMatrix in="printGrain" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0.14 0 0 0 0.9" result="inkTexture" />
                 <feComposite in="stampedShapes" in2="inkTexture" operator="in" />
@@ -163,8 +163,8 @@
                     </a>
                 </div>
 
-                <!-- Interactive Headline Trigger (font-medium on mobile only to match desktop Consolas thickness, font-normal on sm+ desktop) -->
-                <button id="headline-trigger" type="button" aria-expanded="false" aria-controls="social-icons" class="textured-ink text-2xl sm:text-3xl font-medium sm:font-normal tracking-normal font-mono leading-none focus:outline-none transition-colors duration-150 cursor-pointer select-none">
+                <!-- Interactive Headline Trigger (font-normal across all screen sizes for a slightly thinner mobile weight) -->
+                <button id="headline-trigger" type="button" aria-expanded="false" aria-controls="social-icons" class="textured-ink text-2xl sm:text-3xl font-normal tracking-normal font-mono leading-none focus:outline-none transition-colors duration-150 cursor-pointer select-none">
                     headline
                 </button>
             </div>
