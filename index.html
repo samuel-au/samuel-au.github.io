@@ -14,7 +14,7 @@
                 extend: {
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
-                        mono: ['Consolas', 'Courier New', 'monospace'],
+                        mono: ['"IBM Plex Mono"', 'Consolas', 'monospace'],
                     }
                 }
             }
@@ -23,7 +23,7 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         /* Prevent image context highlighting & smooth rendering */
         img {
@@ -103,7 +103,7 @@
                 <feDisplacementMap in="softInk" in2="printGrain" scale="0.4" xChannelSelector="R" yChannelSelector="G" result="organicEdge" />
                 <!-- 4. Gentle photocopy alpha threshold for clean, slightly softened edges -->
                 <feComponentTransfer in="organicEdge" result="stampedShapes">
-                    <feFuncA type="linear" slope="2.0" intercept="-0.42" />
+                    <feFuncA type="linear" slope="1.9" intercept="-0.30" />
                 </feComponentTransfer>
                 <!-- 5. Subtle dry-ink print texture across the letterforms -->
                 <feColorMatrix in="printGrain" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0.14 0 0 0 0.9" result="inkTexture" />
@@ -142,8 +142,8 @@
                 </div>
 
                 <!-- Interactive Headline Trigger -->
-                <button id="headline-trigger" type="button" aria-expanded="false" aria-controls="social-icons" class="textured-ink text-2xl sm:text-3xl font-semibold sm:font-medium tracking-normal font-mono leading-none focus:outline-none transition-colors duration-150 cursor-pointer select-none">
-                    headline
+                <button id="headline-trigger" type="button" aria-expanded="false" aria-controls="social-icons" class="textured-ink text-2xl sm:text-3xl font-medium tracking-normal font-mono leading-none focus:outline-none transition-colors duration-150 cursor-pointer select-none">
+                    samuel au
                 </button>
             </div>
 
