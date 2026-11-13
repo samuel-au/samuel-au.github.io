@@ -52,13 +52,13 @@
             background: #d4d4d8;
         }
 
-        /* GPU-promoted paper relief layer (no mix-blend-mode repaint overhead during scroll) */
+        /* GPU-promoted paper relief layer positioned BEHIND photos & content (z-index: 0) */
         .paper-grain-bg {
             position: fixed;
             inset: 0;
-            z-index: 40;
+            z-index: 0;
             pointer-events: none;
-            opacity: 0.22;
+            opacity: 0.35;
             transform: translateZ(0);
             will-change: transform;
             background-image:
@@ -139,11 +139,11 @@
         </defs>
     </svg>
 
-    <!-- Subtle tactile paper relief texture over the canvas -->
+    <!-- Subtle tactile paper relief texture over the background canvas only -->
     <div class="paper-grain-bg" aria-hidden="true"></div>
 
     <!-- TOP HEADER WITH RIGHT ALIGNED HEADLINE & REVEALABLE SOCIAL ICONS -->
-    <header class="max-w-[1920px] mx-auto flex justify-end items-center mb-2 sm:mb-3 lg:mb-4">
+    <header class="relative z-10 max-w-[1920px] mx-auto flex justify-end items-center mb-2 sm:mb-3 lg:mb-4">
         <div class="inline-flex items-center gap-2 sm:gap-1">
             <div id="headline-menu" class="relative inline-flex items-center pl-2">
                 <!-- Social Icons Container -->
@@ -177,7 +177,7 @@
     </header>
 
     <!-- MAIN CONTAINER - Pure Photo Collage Grid -->
-    <main class="max-w-[1920px] mx-auto">
+    <main class="relative z-10 max-w-[1920px] mx-auto">
         <div id="gallery-grid" class="flex items-start gap-3 sm:gap-4 lg:gap-5"></div>
     </main>
 
@@ -285,7 +285,7 @@
 
         let displayPhotos = [];
         let photoCards = [];
-        let cardAspects = []; // Cached aspect ratio (height / width) per photo for zero-reflow masonry layout
+        let cardAspects = [];
         let currentIndex = 0;
         let currentColCount = 0;
         let layoutFramePending = false;
@@ -374,7 +374,6 @@
             return `data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cpath d='M18 28 L22 14 L30 22 L34 22 L42 14 L46 28 C48 34 45 46 32 46 C19 46 16 34 18 28 Z' fill='none' stroke='${stroke}' stroke-width='2.5' stroke-linejoin='round'/%3E%3Ctext x='50%25' y='58' text-anchor='middle' font-family='monospace' font-size='9' fill='${stroke}'%3E${label}%3C/text%3E%3C/svg%3E`;
         }
 
-        // Preload cat2 & cat3 once so hover/tap swaps are instant
         [2, 3].forEach(s => {
             const preload = new Image();
             preload.src = `images/cat${s}.png`;
@@ -442,7 +441,6 @@
         catTrigger.addEventListener('touchend', handleCatTouchEnd, { passive: true });
         catTrigger.addEventListener('touchcancel', handleCatTouchEnd, { passive: true });
 
-        // Unified outside-interaction listeners (only active work when menus are open)
         document.addEventListener('click', (e) => {
             if (isSocialMenuOpen && !headlineMenu.contains(e.target)) {
                 setSocialMenuState(false, false);
@@ -458,7 +456,6 @@
 
         updateCatImage();
 
-        // Extract numerical index from filename or fallback list position
         function getPhotoNumber(photo) {
             const src = photo.src || '';
             const match = src.match(/(\d+)(?=[^\d]*$)/) || src.match(/(\d+)/);
@@ -466,7 +463,6 @@
             return photo.order || 0;
         }
 
-        // Parse date string into timestamp for sorting
         function parsePhotoDate(dateStr) {
             if (!dateStr) return 0;
             const parts = dateStr.trim().split(/[.\/-]/);
@@ -484,7 +480,6 @@
             return isNaN(fallback) ? 0 : fallback;
         }
 
-        // Format date display as dd.mm.yyyy
         function formatDisplayDate(dateStr) {
             if (!dateStr) return '';
             const parts = dateStr.trim().split(/[.\/-]/);
@@ -500,7 +495,6 @@
             return dateStr;
         }
 
-        // Sort photos descending by date
         function sortPhotosDescending() {
             displayPhotos = photos
                 .map((entry, idx) => normalizePhotoItem(entry, photos.length - idx))
@@ -512,7 +506,6 @@
                 });
         }
 
-        // Responsive column count
         function getColumnCount() {
             const width = window.innerWidth;
             if (width >= 1024) return 4;
@@ -521,7 +514,6 @@
             return 1;
         }
 
-        // Build card DOM nodes with lazy loading & cached aspect ratios
         function buildPhotoCards() {
             sortPhotosDescending();
             const defaultAspect = PREVIEW_FALLBACK_DIMENSIONS[1] / PREVIEW_FALLBACK_DIMENSIONS[0];
@@ -567,7 +559,6 @@
             });
         }
 
-        // Single delegated click handler for all gallery cards (replaces N individual listeners)
         galleryGrid.addEventListener('click', (e) => {
             const card = e.target.closest('.gallery-card');
             if (!card) return;
@@ -584,7 +575,6 @@
             });
         }
 
-        // Pure math shortest-column selection (eliminates forced synchronous layout thrashing from offsetHeight reads)
         function renderGallery(force = false) {
             const colCount = getColumnCount();
             if (!force && colCount === currentColCount) return;
@@ -751,7 +741,7 @@
             resetTrackTransform();
         }
 
-        function slideToPhoto(direction) {
+        function slideToPhoto(direction, source = 'touch') {
             if (isClosingVertically || displayPhotos.length <= 1) return;
 
             if (isSlideAnimating) {
@@ -767,8 +757,14 @@
             const width = window.innerWidth;
             const targetX = direction === 'next' ? -width : width;
 
+            // Smoother, slightly slower glide for keyboard/button navigation; snappy for touch swipes
+            const durationMs = source === 'keyboard' ? 360 : 220;
+            const easing = source === 'keyboard'
+                ? 'cubic-bezier(0.16, 1, 0.3, 1)'
+                : 'cubic-bezier(0.22, 1, 0.36, 1)';
+
             requestAnimationFrame(() => {
-                lightboxTrack.style.transition = 'transform 220ms cubic-bezier(0.22, 1, 0.36, 1)';
+                lightboxTrack.style.transition = `transform ${durationMs}ms ${easing}`;
                 lightboxTrack.style.transform = `translate3d(${targetX}px, 0px, 0)`;
             });
 
@@ -794,17 +790,17 @@
             };
 
             lightboxTrack.addEventListener('transitionend', slideTransitionEndHandler);
-            slideFinishTimer = setTimeout(finishSlide, 240);
+            slideFinishTimer = setTimeout(finishSlide, durationMs + 30);
         }
 
-        function nextPhoto(e) {
+        function nextPhoto(e, source = 'keyboard') {
             if (e) e.stopPropagation();
-            slideToPhoto('next');
+            slideToPhoto('next', source);
         }
 
-        function prevPhoto(e) {
+        function prevPhoto(e, source = 'keyboard') {
             if (e) e.stopPropagation();
-            slideToPhoto('prev');
+            slideToPhoto('prev', source);
         }
 
         function slideOutVertically(directionY) {
@@ -851,17 +847,17 @@
             e.stopPropagation();
             closeLightbox();
         });
-        lightboxNext.addEventListener('click', nextPhoto);
-        lightboxPrev.addEventListener('click', prevPhoto);
+        lightboxNext.addEventListener('click', (e) => nextPhoto(e, 'keyboard'));
+        lightboxPrev.addEventListener('click', (e) => prevPhoto(e, 'keyboard'));
 
         window.addEventListener('keydown', (e) => {
             if (!isLightboxOpen) return;
             if (e.key === 'Escape') closeLightbox();
-            else if (e.key === 'ArrowRight') nextPhoto();
-            else if (e.key === 'ArrowLeft') prevPhoto();
+            else if (e.key === 'ArrowRight') nextPhoto(null, 'keyboard');
+            else if (e.key === 'ArrowLeft') prevPhoto(null, 'keyboard');
         });
 
-        // Mobile Continuous Interactive Touch Drag & Swipe (rAF-throttled for 60/120fps smoothness)
+        // Mobile Continuous Interactive Touch Drag & Swipe
         let touchStartX = 0;
         let touchStartY = 0;
         let touchStartTime = 0;
@@ -996,9 +992,9 @@
 
             if (dragAxis === 'x') {
                 if (isHorizontalSwipe && currentDeltaX < 0 && currentIndex < displayPhotos.length - 1) {
-                    slideToPhoto('next');
+                    slideToPhoto('next', 'touch');
                 } else if (isHorizontalSwipe && currentDeltaX > 0 && currentIndex > 0) {
-                    slideToPhoto('prev');
+                    slideToPhoto('prev', 'touch');
                 } else {
                     lightboxTrack.style.transition = 'transform 180ms cubic-bezier(0.22, 1, 0.36, 1)';
                     lightboxTrack.style.transform = 'translate3d(0px, 0px, 0)';
