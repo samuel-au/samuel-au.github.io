@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en" class="bg-white text-zinc-900">
+<html lang="en" class="bg-[#fcfcfb] text-zinc-900">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Samuel Au</title>
+    <title>My portfolio</title>
     <!-- Browser Tab Icon (Favicon) - Replace href with your own icon path (e.g., "images/favicon.png") if preferred -->
-    <link rel="icon" type="image/svg+xml" href="images/d820d9c3-172f-4e38-894d-d45b430bb489-photoaidcom-cropped.jpg">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2318181b'/%3E%3Ccircle cx='16' cy='16' r='8' fill='none' stroke='%23ffffff' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='2.5' fill='%23ffffff'/%3E%3C/svg%3E">
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -42,7 +42,7 @@
             width: 8px;
         }
         ::-webkit-scrollbar-track {
-            background: #ffffff;
+            background: #fcfcfb;
         }
         ::-webkit-scrollbar-thumb {
             background: #e4e4e7;
@@ -51,9 +51,32 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #d4d4d8;
         }
+
+        /* Subtle film-paper grain texture overlay for the white background */
+        .paper-grain-bg {
+            position: fixed;
+            inset: 0;
+            z-index: 40;
+            pointer-events: none;
+            opacity: 0.045;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            background-repeat: repeat;
+            background-size: 180px 180px;
+        }
+
+        /* Subtle warm #FF8C42 film date glow */
+        .film-date-glow {
+            color: #FF8C42;
+            text-shadow:
+                0 0 5px rgba(255, 140, 66, 0.38),
+                0 1px 2px rgba(0, 0, 0, 0.45);
+        }
     </style>
 </head>
-<body class="min-h-screen bg-white font-sans antialiased selection:bg-zinc-200 selection:text-zinc-900 p-4 sm:p-6 lg:p-8">
+<body class="relative min-h-screen bg-[#fcfcfb] font-sans antialiased selection:bg-zinc-200 selection:text-zinc-900 p-4 sm:p-6 lg:p-8">
+
+    <!-- Subtle tactile paper/film grain texture over the white canvas -->
+    <div class="paper-grain-bg" aria-hidden="true"></div>
 
     <!-- TOP HEADER WITH RIGHT ALIGNED HEADLINE & REVEALABLE SOCIAL ICONS -->
     <header class="max-w-[1920px] mx-auto flex justify-end items-center mb-4 sm:mb-6 lg:mb-8">
@@ -64,14 +87,14 @@
             <div id="social-icons" class="flex items-center gap-3.5 pr-4 invisible opacity-0 translate-x-2 pointer-events-none transition-all duration-200 ease-out">
                 
                 <!-- YouTube Icon Link -->
-                <a href="https://www.youtube.com/@au_samuel" target="_blank" rel="noopener noreferrer" aria-label="YouTube" title="YouTube" class="p-1.5 text-zinc-900 hover:text-zinc-500 transition-colors duration-150">
+                <a href="https://www.youtube.com/" target="_blank" rel="noopener noreferrer" aria-label="YouTube" title="YouTube" class="p-1.5 text-zinc-900 hover:text-[#FF8C42] transition-colors duration-150">
                     <svg class="w-5 h-5 sm:w-[22px] sm:h-[22px]" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
                     </svg>
                 </a>
 
                 <!-- Instagram Icon Link -->
-                <a href="https://www.instagram.com/samuel_au_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" title="Instagram" class="p-1.5 text-zinc-900 hover:text-zinc-500 transition-colors duration-150">
+                <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" title="Instagram" class="p-1.5 text-zinc-900 hover:text-[#FF8C42] transition-colors duration-150">
                     <svg class="w-5 h-5 sm:w-[22px] sm:h-[22px]" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
                         <rect width="20" height="20" x="2" y="2" rx="5" ry="5"></rect>
                         <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
@@ -81,8 +104,8 @@
             </div>
 
             <!-- Interactive Headline Trigger (Only hovering or clicking this text activates the reveal) -->
-            <button id="headline-trigger" type="button" aria-expanded="false" aria-controls="social-icons" class="text-2xl sm:text-3xl font-medium tracking-normal text-zinc-900 font-mono hover:text-zinc-500 focus:outline-none transition-colors duration-150 cursor-pointer select-none">
-                samuel au
+            <button id="headline-trigger" type="button" aria-expanded="false" aria-controls="social-icons" class="text-2xl sm:text-3xl font-medium tracking-normal text-zinc-900 font-mono hover:text-[#FF8C42] focus:outline-none transition-colors duration-150 cursor-pointer select-none">
+                Headline
             </button>
         </div>
     </header>
@@ -255,39 +278,35 @@
             if (open) {
                 socialIcons.classList.remove('invisible', 'opacity-0', 'translate-x-2', 'pointer-events-none');
                 socialIcons.classList.add('visible', 'opacity-100', 'translate-x-0', 'pointer-events-auto');
-                headlineTrigger.classList.add('text-zinc-500');
             } else {
                 socialIcons.classList.remove('visible', 'opacity-100', 'translate-x-0', 'pointer-events-auto');
                 socialIcons.classList.add('invisible', 'opacity-0', 'translate-x-2', 'pointer-events-none');
-                headlineTrigger.classList.remove('text-zinc-500');
             }
         }
 
-        // Track touch timestamps so synthetic mouseenter events on mobile taps don't interfere with click toggling
         headlineTrigger.addEventListener('touchstart', () => {
             lastTouchTime = Date.now();
         }, { passive: true });
 
-        // Open ONLY when the pointer directly enters the Headline text (not the empty space to its left)
+        // Hovering directly over the "Headline" text reveals the icons
         headlineTrigger.addEventListener('mouseenter', () => {
             if (Date.now() - lastTouchTime < 500) return;
             setSocialMenuState(true);
         });
 
-        // Toggle open/closed when clicking or tapping Headline (works on both mobile and desktop)
+        // Leaving the combined headline + icons area closes the menu
+        headlineMenu.addEventListener('mouseleave', () => {
+            if (Date.now() - lastTouchTime < 500) return;
+            setSocialMenuState(false);
+        });
+
+        // Clicking or tapping "Headline" toggles the icons open/closed
         headlineTrigger.addEventListener('click', (e) => {
             e.stopPropagation();
             setSocialMenuState(!isSocialMenuOpen);
         });
 
-        // Close when cursor leaves the combined Headline + icons area on desktop
-        headlineMenu.addEventListener('mouseleave', () => {
-            if (isSocialMenuOpen) {
-                setSocialMenuState(false);
-            }
-        });
-
-        // Close revealed icons when clicking/tapping anywhere outside the headline menu
+        // Tapping/clicking anywhere outside closes the revealed icons
         document.addEventListener('click', (e) => {
             if (isSocialMenuOpen && !headlineMenu.contains(e.target)) {
                 setSocialMenuState(false);
@@ -320,7 +339,7 @@
             return isNaN(fallback) ? 0 : fallback;
         }
 
-        // Always format date display as dd.mm.yyyy
+        // Always format date display as dd.mm.yyyy (e.g., 09.11.2026)
         function formatDisplayDate(dateStr) {
             if (!dateStr) return '';
             const parts = dateStr.trim().split(/[.\/-]/);
@@ -381,8 +400,8 @@
                 });
 
                 const overlay = document.createElement('div');
-                overlay.className = 'absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-150 flex items-end p-3 pointer-events-none';
-                overlay.innerHTML = `<span class="font-mono text-xs text-white/90 tracking-wide">${formattedDate}</span>`;
+                overlay.className = 'absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-150 flex items-end p-3 pointer-events-none';
+                overlay.innerHTML = `<span class="film-date-glow font-mono text-xs tracking-wide">${formattedDate}</span>`;
 
                 item.appendChild(img);
                 item.appendChild(overlay);
@@ -403,7 +422,6 @@
         }
 
         // Find the column whose bottom edge is highest (smallest offsetHeight).
-        // Strict `<` ensures left columns win automatically on equal height.
         function getShortestColumnIndex(columns) {
             let shortestIndex = 0;
             let minHeight = columns[0].offsetHeight;
@@ -531,29 +549,73 @@
                 if (e.key === 'Escape') closeLightbox();
                 if (e.key === 'ArrowRight') nextPhoto();
                 if (e.key === 'ArrowLeft') prevPhoto();
-            } else if (e.key === 'Escape' && isSocialMenuOpen) {
-                setSocialMenuState(false);
             }
         });
 
+        // Mobile Touch Navigation (Protected against Pinch-to-Zoom & Panning while Zoomed)
         let touchStartX = 0;
+        let touchStartY = 0;
         let touchEndX = 0;
+        let touchEndY = 0;
+        let isPinchingOrMultiTouch = false;
+        let lastMultiTouchEndTime = 0;
+
+        function getViewportScale() {
+            return window.visualViewport ? window.visualViewport.scale : 1;
+        }
 
         lightbox.addEventListener('touchstart', (e) => {
-            touchStartX = e.changedTouches[0].screenX;
+            if (e.touches.length > 1 || getViewportScale() > 1.02) {
+                isPinchingOrMultiTouch = true;
+                return;
+            }
+            if (e.touches.length === 1) {
+                touchStartX = e.touches[0].clientX;
+                touchStartY = e.touches[0].clientY;
+            }
+        }, { passive: true });
+
+        lightbox.addEventListener('touchmove', (e) => {
+            if (e.touches.length > 1 || getViewportScale() > 1.02) {
+                isPinchingOrMultiTouch = true;
+            }
         }, { passive: true });
 
         lightbox.addEventListener('touchend', (e) => {
-            touchEndX = e.changedTouches[0].screenX;
-            handleSwipe();
+            if (e.touches.length > 0) {
+                isPinchingOrMultiTouch = true;
+                lastMultiTouchEndTime = Date.now();
+                return;
+            }
+
+            if (isPinchingOrMultiTouch) {
+                isPinchingOrMultiTouch = false;
+                lastMultiTouchEndTime = Date.now();
+                return;
+            }
+
+            if (getViewportScale() > 1.02 || (Date.now() - lastMultiTouchEndTime < 350)) {
+                return;
+            }
+
+            if (e.changedTouches.length === 1) {
+                touchEndX = e.changedTouches[0].clientX;
+                touchEndY = e.changedTouches[0].clientY;
+                handleSwipe();
+            }
         }, { passive: true });
 
         function handleSwipe() {
+            const deltaX = touchEndX - touchStartX;
+            const deltaY = touchEndY - touchStartY;
             const swipeThreshold = 50;
-            if (touchEndX < touchStartX - swipeThreshold) {
-                nextPhoto();
-            } else if (touchEndX > touchStartX + swipeThreshold) {
-                prevPhoto();
+
+            if (Math.abs(deltaX) > swipeThreshold && Math.abs(deltaX) > Math.abs(deltaY) * 1.2) {
+                if (deltaX < 0) {
+                    nextPhoto();
+                } else {
+                    prevPhoto();
+                }
             }
         }
 
