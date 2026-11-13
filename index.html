@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Samuel A</title>
+    <title>Samuel Au</title>
     <!-- Browser Tab Icon (Favicon) -->
     <link rel="icon" type="image/svg+xml" href="images/d820d9c3-172f-4e38-894d-d45b430bb489-photoaidcom-cropped.jpg">
     <!-- Tailwind CSS CDN -->
@@ -14,7 +14,6 @@
                 extend: {
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
-                        /* Consolas loads first on desktop; IBM Plex Mono acts as the mobile fallback instead of thin Courier New */
                         mono: ['Consolas', '"IBM Plex Mono"', 'monospace'],
                     }
                 }
@@ -53,16 +52,17 @@
             background: #d4d4d8;
         }
 
-        /* Gentle, spotless woven paper / cardstock surface relief (no dark speckles) */
+        /* GPU-promoted paper relief layer (no mix-blend-mode repaint overhead during scroll) */
         .paper-grain-bg {
             position: fixed;
             inset: 0;
             z-index: 40;
             pointer-events: none;
-            opacity: 0.35;
-            mix-blend-mode: soft-light;
+            opacity: 0.22;
+            transform: translateZ(0);
+            will-change: transform;
             background-image:
-                url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='paperRelief'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' seed='5' stitchTiles='stitch' result='noise'/%3E%3CfeDiffuseLighting in='noise' lighting-color='%23ffffff' surfaceScale='0.75'%3E%3CfeDistantLight azimuth='45' elevation='62'/%3E%3C/feDiffuseLighting%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23paperRelief)'/%3E%3C/svg%3E"),
+                url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='paperRelief'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' seed='5' stitchTiles='stitch' result='noise'/%3E%3CfeDiffuseLighting in='noise' lighting-color='%23ffffff' surfaceScale='0.75'%3E%3CfeDistantLight azimuth='45' elevation='62'/%3E%3C/feDiffuseLighting%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23paperRelief)'/%3E%3C/svg%3E"),
                 linear-gradient(180deg, rgba(255, 255, 255, 0.25) 0%, rgba(235, 231, 223, 0.2) 100%);
             background-repeat: repeat, no-repeat;
             background-size: 160px 160px, 100% 100%;
@@ -73,7 +73,6 @@
             filter: url(#cardboard-ink-print);
         }
 
-        /* Mobile-only filter with slightly higher ink bleed so Retina/OLED screens match desktop stroke weight */
         @media (max-width: 639px) {
             .textured-ink {
                 filter: url(#cardboard-ink-print-mobile);
@@ -93,6 +92,12 @@
             }
         }
 
+        /* Skip offscreen card layout/paint work until scrolled near viewport */
+        .gallery-card {
+            content-visibility: auto;
+            contain-intrinsic-size: auto 320px;
+        }
+
         /* Headline color: #71717a on direct hover for desktop, stays #71717a while icons are open on mobile */
         #headline-trigger {
             color: #18181b;
@@ -108,7 +113,7 @@
     <!-- Subtle Scanned / 90s Outdoor Print Text & Icon Filter -->
     <svg class="sr-only" width="0" height="0" aria-hidden="true">
         <defs>
-            <!-- Desktop Filter (Original settings preserved) -->
+            <!-- Desktop Filter -->
             <filter id="cardboard-ink-print" x="-15%" y="-15%" width="130%" height="130%" color-interpolation-filters="sRGB">
                 <feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="2" seed="14" result="printGrain" />
                 <feGaussianBlur in="SourceGraphic" stdDeviation="0.38" result="softInk" />
@@ -120,7 +125,7 @@
                 <feComposite in="stampedShapes" in2="inkTexture" operator="in" />
             </filter>
 
-            <!-- Mobile Filter (Balanced ink bleed so mobile is slightly thinner while still matching desktop weight) -->
+            <!-- Mobile Filter -->
             <filter id="cardboard-ink-print-mobile" x="-15%" y="-15%" width="130%" height="130%" color-interpolation-filters="sRGB">
                 <feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="2" seed="14" result="printGrain" />
                 <feGaussianBlur in="SourceGraphic" stdDeviation="0.40" result="softInk" />
@@ -140,20 +145,15 @@
     <!-- TOP HEADER WITH RIGHT ALIGNED HEADLINE & REVEALABLE SOCIAL ICONS -->
     <header class="max-w-[1920px] mx-auto flex justify-end items-center mb-2 sm:mb-3 lg:mb-4">
         <div class="inline-flex items-center gap-2 sm:gap-1">
-            <!-- Outer wrapper keeps icons open while moving cursor between Headline and revealed icons -->
             <div id="headline-menu" class="relative inline-flex items-center pl-2">
-                
-                <!-- Social Icons Container (Invisible & non-interactive until Headline is hovered or clicked) -->
+                <!-- Social Icons Container -->
                 <div id="social-icons" class="flex items-center gap-3.5 pr-4 invisible opacity-0 translate-x-2 pointer-events-none transition-all duration-200 ease-out">
-                    
-                    <!-- YouTube Icon Link with #71717a hover highlight -->
                     <a href="https://www.youtube.com/" target="_blank" rel="noopener noreferrer" aria-label="YouTube" title="YouTube" class="textured-ink p-1.5 text-zinc-900 hover:text-[#71717a] transition-colors duration-150">
                         <svg class="w-5 h-5 sm:w-[22px] sm:h-[22px]" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                             <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
                         </svg>
                     </a>
 
-                    <!-- Instagram Icon Link with #71717a hover highlight -->
                     <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" title="Instagram" class="textured-ink p-1.5 text-zinc-900 hover:text-[#71717a] transition-colors duration-150">
                         <svg class="w-5 h-5 sm:w-[22px] sm:h-[22px]" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
                             <rect width="20" height="20" x="2" y="2" rx="5" ry="5"></rect>
@@ -163,7 +163,7 @@
                     </a>
                 </div>
 
-                <!-- Interactive Headline Trigger (font-normal across all screen sizes for a slightly thinner mobile weight) -->
+                <!-- Interactive Headline Trigger -->
                 <button id="headline-trigger" type="button" aria-expanded="false" aria-controls="social-icons" class="textured-ink text-2xl sm:text-3xl font-normal tracking-normal font-mono leading-none focus:outline-none transition-colors duration-150 cursor-pointer select-none">
                     headline
                 </button>
@@ -171,17 +171,14 @@
 
             <!-- Interactive Cat PNG Image to the right of Headline -->
             <button id="cat-trigger" type="button" aria-label="Interactive Cat" class="textured-ink focus:outline-none cursor-pointer select-none flex items-center justify-center">
-                <img id="cat-img" src="images/cat1.png" alt="Cat" draggable="false" class="w-16 h-16 sm:w-[72px] sm:h-[72px] object-contain" />
+                <img id="cat-img" src="images/cat1.png" alt="Cat" draggable="false" decoding="async" class="w-16 h-16 sm:w-[72px] sm:h-[72px] object-contain" />
             </button>
         </div>
     </header>
 
     <!-- MAIN CONTAINER - Pure Photo Collage Grid -->
     <main class="max-w-[1920px] mx-auto">
-        <!-- Masonry Grid Layout -->
-        <div id="gallery-grid" class="flex items-start gap-3 sm:gap-4 lg:gap-5">
-            <!-- Columns & photos dynamically rendered via JavaScript -->
-        </div>
+        <div id="gallery-grid" class="flex items-start gap-3 sm:gap-4 lg:gap-5"></div>
     </main>
 
     <!-- LIGHTBOX MODAL OVERLAY -->
@@ -210,17 +207,17 @@
             <div id="lightbox-track" class="relative w-full h-full min-h-0 flex items-center justify-center will-change-transform">
                 <!-- Previous Slide -->
                 <div id="lightbox-slide-prev" class="absolute inset-0 -translate-x-[100vw] flex items-center justify-center pointer-events-none">
-                    <img id="lightbox-img-prev" src="" alt="" class="max-w-[calc(100vw-3rem)] sm:max-w-[calc(100vw-6rem)] max-h-[calc(100dvh-7rem)] w-auto h-auto object-contain shadow-xl" />
+                    <img id="lightbox-img-prev" src="" alt="" decoding="async" class="max-w-[calc(100vw-3rem)] sm:max-w-[calc(100vw-6rem)] max-h-[calc(100dvh-7rem)] w-auto h-auto object-contain shadow-xl" />
                 </div>
 
                 <!-- Active Lightbox Photo Card -->
                 <div id="lightbox-card" class="absolute inset-0 flex items-center justify-center select-text cursor-default">
-                    <img id="lightbox-img" src="" alt="" class="max-w-[calc(100vw-3rem)] sm:max-w-[calc(100vw-6rem)] max-h-[calc(100dvh-7rem)] w-auto h-auto object-contain shadow-xl cursor-default" />
+                    <img id="lightbox-img" src="" alt="" decoding="async" class="max-w-[calc(100vw-3rem)] sm:max-w-[calc(100vw-6rem)] max-h-[calc(100dvh-7rem)] w-auto h-auto object-contain shadow-xl cursor-default" />
                 </div>
 
                 <!-- Next Slide -->
                 <div id="lightbox-slide-next" class="absolute inset-0 translate-x-[100vw] flex items-center justify-center pointer-events-none">
-                    <img id="lightbox-img-next" src="" alt="" class="max-w-[calc(100vw-3rem)] sm:max-w-[calc(100vw-6rem)] max-h-[calc(100dvh-7rem)] w-auto h-auto object-contain shadow-xl" />
+                    <img id="lightbox-img-next" src="" alt="" decoding="async" class="max-w-[calc(100vw-3rem)] sm:max-w-[calc(100vw-6rem)] max-h-[calc(100dvh-7rem)] w-auto h-auto object-contain shadow-xl" />
                 </div>
             </div>
 
@@ -232,7 +229,6 @@
             </button>
         </div>
 
-        <!-- Empty Spacer for Bottom Alignment Balance -->
         <div class="h-4"></div>
     </div>
 
@@ -241,7 +237,6 @@
         /**
          * =========================================================================
          * ADD NEW PHOTOS HERE
-         * Just add a new entry in any order (they are automatically sorted newest-first).
          * Supported formats:
          *   1. { src: "images/your-photo.jpg", date: "dd.mm.yyyy" }
          *   2. "images/your-photo.jpg | dd.mm.yyyy"
@@ -264,12 +259,15 @@
             { src: "images/DSCF4376.jpg", date: "02.08.2026" }
         ];
 
-        // Constant fallback dimensions used only if a local image file isn't found
         const PREVIEW_FALLBACK_DIMENSIONS = [800, 1000];
+        const fallbackSvgCache = new Map();
 
         function createFallbackSVG(index = 0) {
+            if (fallbackSvgCache.has(index)) return fallbackSvgCache.get(index);
             const [w, h] = PREVIEW_FALLBACK_DIMENSIONS;
-            return `data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='${w}' height='${h}' viewBox='0 0 ${w} ${h}'%3E%3Crect width='${w}' height='${h}' fill='%23f4f4f5'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='monospace' font-size='16' fill='%23a1a1aa'%3EPhoto ${index + 1}%3C/text%3E%3C/svg%3E`;
+            const uri = `data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='${w}' height='${h}' viewBox='0 0 ${w} ${h}'%3E%3Crect width='${w}' height='${h}' fill='%23f4f4f5'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='monospace' font-size='16' fill='%23a1a1aa'%3EPhoto ${index + 1}%3C/text%3E%3C/svg%3E`;
+            fallbackSvgCache.set(index, uri);
+            return uri;
         }
 
         function normalizePhotoItem(entry, fallbackOrder) {
@@ -287,9 +285,12 @@
 
         let displayPhotos = [];
         let photoCards = [];
+        let cardAspects = []; // Cached aspect ratio (height / width) per photo for zero-reflow masonry layout
         let currentIndex = 0;
         let currentColCount = 0;
         let layoutFramePending = false;
+        let resizeTimer = null;
+        let isLightboxOpen = false;
         let isSlideAnimating = false;
         let isClosingVertically = false;
         let pendingSlideTargetIndex = null;
@@ -317,20 +318,19 @@
         const lightboxNext = document.getElementById('lightbox-next');
         const lightboxCard = document.getElementById('lightbox-card');
 
-        // Headline & Social Icons Reveal Logic (Precise Hover + Click/Tap Toggle)
+        // Headline & Social Icons Reveal Logic
         let isSocialMenuOpen = false;
         let lastTouchTime = 0;
 
         function setSocialMenuState(open, isTouch = false) {
+            if (isSocialMenuOpen === open) return;
             isSocialMenuOpen = open;
             headlineTrigger.setAttribute('aria-expanded', String(open));
 
             if (open) {
                 socialIcons.classList.remove('invisible', 'opacity-0', 'translate-x-2', 'pointer-events-none');
                 socialIcons.classList.add('visible', 'opacity-100', 'translate-x-0', 'pointer-events-auto');
-                if (isTouch) {
-                    headlineTrigger.classList.add('mobile-active');
-                }
+                if (isTouch) headlineTrigger.classList.add('mobile-active');
             } else {
                 socialIcons.classList.remove('visible', 'opacity-100', 'translate-x-0', 'pointer-events-auto');
                 socialIcons.classList.add('invisible', 'opacity-0', 'translate-x-2', 'pointer-events-none');
@@ -342,38 +342,29 @@
             lastTouchTime = Date.now();
         }, { passive: true });
 
-        // Hovering directly over the "Headline" text reveals the icons
         headlineTrigger.addEventListener('mouseenter', () => {
             if (Date.now() - lastTouchTime < 500) return;
             headlineTrigger.classList.remove('mobile-active');
             setSocialMenuState(true, false);
         });
 
-        // Leaving the combined headline + icons area closes the menu
         headlineMenu.addEventListener('mouseleave', () => {
             if (Date.now() - lastTouchTime < 500) return;
             setSocialMenuState(false, false);
         });
 
-        // Clicking or tapping "Headline" toggles the icons open/closed
         headlineTrigger.addEventListener('click', (e) => {
             e.stopPropagation();
             const isTouch = Date.now() - lastTouchTime < 500;
             setSocialMenuState(!isSocialMenuOpen, isTouch);
         });
 
-        // Tapping/clicking anywhere outside closes the revealed icons
-        document.addEventListener('click', (e) => {
-            if (isSocialMenuOpen && !headlineMenu.contains(e.target)) {
-                setSocialMenuState(false, false);
-            }
-        });
-
-        // Interactive Cat PNG State Machine (cat1.png: default, cat2.png: hover/mobile-active, cat3.png: pressed down)
+        // Interactive Cat PNG State Machine (preloaded states for zero-lag swaps)
         let isCatHovered = false;
         let isCatPressed = false;
         let isCatMobileSticky = false;
         let isCatTouchActive = false;
+        let currentCatState = 0;
 
         function createCatFallbackSVG(state) {
             const labels = { 1: 'cat1.png', 2: 'cat2.png', 3: 'cat3.png' };
@@ -383,6 +374,12 @@
             return `data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cpath d='M18 28 L22 14 L30 22 L34 22 L42 14 L46 28 C48 34 45 46 32 46 C19 46 16 34 18 28 Z' fill='none' stroke='${stroke}' stroke-width='2.5' stroke-linejoin='round'/%3E%3Ctext x='50%25' y='58' text-anchor='middle' font-family='monospace' font-size='9' fill='${stroke}'%3E${label}%3C/text%3E%3C/svg%3E`;
         }
 
+        // Preload cat2 & cat3 once so hover/tap swaps are instant
+        [2, 3].forEach(s => {
+            const preload = new Image();
+            preload.src = `images/cat${s}.png`;
+        });
+
         function updateCatImage() {
             let state = 1;
             if (isCatPressed) {
@@ -391,15 +388,16 @@
                 state = 2;
             }
 
-            const targetSrc = `images/cat${state}.png`;
+            if (state === currentCatState) return;
+            currentCatState = state;
+
             catImg.onerror = function () {
                 this.onerror = null;
                 this.src = createCatFallbackSVG(state);
             };
-            catImg.src = targetSrc;
+            catImg.src = `images/cat${state}.png`;
         }
 
-        // Mouse / Desktop hover and press-and-release handlers
         catTrigger.addEventListener('mouseenter', () => {
             if (isCatTouchActive) return;
             isCatHovered = true;
@@ -418,14 +416,12 @@
             updateCatImage();
         });
 
-        // Listen on window so releasing the mouse button anywhere reverts properly
         window.addEventListener('mouseup', () => {
             if (!isCatPressed || isCatTouchActive) return;
             isCatPressed = false;
             updateCatImage();
         });
 
-        // Mobile / Touch press-and-release handlers
         catTrigger.addEventListener('touchstart', () => {
             isCatTouchActive = true;
             isCatPressed = true;
@@ -446,7 +442,13 @@
         catTrigger.addEventListener('touchend', handleCatTouchEnd, { passive: true });
         catTrigger.addEventListener('touchcancel', handleCatTouchEnd, { passive: true });
 
-        // Reset cat back to cat1.png when pressing any other part of the screen on mobile
+        // Unified outside-interaction listeners (only active work when menus are open)
+        document.addEventListener('click', (e) => {
+            if (isSocialMenuOpen && !headlineMenu.contains(e.target)) {
+                setSocialMenuState(false, false);
+            }
+        });
+
         document.addEventListener('touchstart', (e) => {
             if (isCatMobileSticky && !catTrigger.contains(e.target)) {
                 isCatMobileSticky = false;
@@ -454,7 +456,6 @@
             }
         }, { passive: true });
 
-        // Initialize default cat PNG image with transparent fallback support
         updateCatImage();
 
         // Extract numerical index from filename or fallback list position
@@ -506,9 +507,7 @@
                 .sort((a, b) => {
                     const dateA = parsePhotoDate(a.date);
                     const dateB = parsePhotoDate(b.date);
-                    if (dateB !== dateA) {
-                        return dateB - dateA;
-                    }
+                    if (dateB !== dateA) return dateB - dateA;
                     return getPhotoNumber(b) - getPhotoNumber(a);
                 });
         }
@@ -522,25 +521,39 @@
             return 1;
         }
 
-        // Build card DOM nodes
+        // Build card DOM nodes with lazy loading & cached aspect ratios
         function buildPhotoCards() {
             sortPhotosDescending();
+            const defaultAspect = PREVIEW_FALLBACK_DIMENSIONS[1] / PREVIEW_FALLBACK_DIMENSIONS[0];
+            cardAspects = new Array(displayPhotos.length).fill(defaultAspect);
+
             photoCards = displayPhotos.map((photo, index) => {
                 const item = document.createElement('div');
-                item.className = 'relative group overflow-hidden bg-zinc-100 rounded-none cursor-pointer';
+                item.className = 'gallery-card relative group overflow-hidden bg-zinc-100 rounded-none cursor-pointer';
+                item.dataset.photoIndex = String(index);
                 const formattedDate = formatDisplayDate(photo.date);
 
                 const img = document.createElement('img');
                 img.src = photo.src;
                 img.alt = photo.alt || 'image';
-                img.className = 'w-full h-auto object-cover transition-all duration-150 group-hover:scale-[1.015] group-hover:opacity-95';
+                img.decoding = 'async';
+                img.loading = index < 6 ? 'eager' : 'lazy';
+                if (index < 2) img.fetchPriority = 'high';
+                img.className = 'w-full h-auto object-cover transition-transform duration-150 group-hover:scale-[1.015] group-hover:opacity-95';
 
-                img.addEventListener('load', scheduleRelayout);
+                img.addEventListener('load', function () {
+                    if (this.naturalWidth > 0) {
+                        cardAspects[index] = this.naturalHeight / this.naturalWidth;
+                    }
+                    scheduleRelayout();
+                });
+
                 img.addEventListener('error', function () {
                     const fallback = createFallbackSVG(index);
                     if (this.src !== fallback) {
                         this.src = fallback;
                     }
+                    cardAspects[index] = defaultAspect;
                     scheduleRelayout();
                 });
 
@@ -550,11 +563,17 @@
 
                 item.appendChild(img);
                 item.appendChild(overlay);
-                item.addEventListener('click', () => openLightbox(index));
-
                 return item;
             });
         }
+
+        // Single delegated click handler for all gallery cards (replaces N individual listeners)
+        galleryGrid.addEventListener('click', (e) => {
+            const card = e.target.closest('.gallery-card');
+            if (!card) return;
+            const index = Number(card.dataset.photoIndex);
+            if (!Number.isNaN(index)) openLightbox(index);
+        });
 
         function scheduleRelayout() {
             if (layoutFramePending) return;
@@ -565,20 +584,7 @@
             });
         }
 
-        function getShortestColumnIndex(columns) {
-            let shortestIndex = 0;
-            let minHeight = columns[0].offsetHeight;
-
-            for (let i = 1; i < columns.length; i++) {
-                const colHeight = columns[i].offsetHeight;
-                if (colHeight < minHeight) {
-                    minHeight = colHeight;
-                    shortestIndex = i;
-                }
-            }
-            return shortestIndex;
-        }
-
+        // Pure math shortest-column selection (eliminates forced synchronous layout thrashing from offsetHeight reads)
         function renderGallery(force = false) {
             const colCount = getColumnCount();
             if (!force && colCount === currentColCount) return;
@@ -588,20 +594,31 @@
                 buildPhotoCards();
             }
 
-            galleryGrid.innerHTML = '';
+            const fragment = document.createDocumentFragment();
+            const columns = new Array(colCount);
+            const colHeights = new Float64Array(colCount);
 
-            const columns = [];
             for (let i = 0; i < colCount; i++) {
                 const col = document.createElement('div');
                 col.className = 'flex-1 flex flex-col gap-3 sm:gap-4 lg:gap-5';
-                galleryGrid.appendChild(col);
-                columns.push(col);
+                columns[i] = col;
+                fragment.appendChild(col);
             }
 
-            photoCards.forEach((card) => {
-                const targetColIndex = getShortestColumnIndex(columns);
-                columns[targetColIndex].appendChild(card);
-            });
+            for (let i = 0; i < photoCards.length; i++) {
+                let shortestIndex = 0;
+                let minH = colHeights[0];
+                for (let c = 1; c < colCount; c++) {
+                    if (colHeights[c] < minH) {
+                        minH = colHeights[c];
+                        shortestIndex = c;
+                    }
+                }
+                columns[shortestIndex].appendChild(photoCards[i]);
+                colHeights[shortestIndex] += cardAspects[i] + 0.04;
+            }
+
+            galleryGrid.replaceChildren(fragment);
         }
 
         function preloadNeighborImages(centerIndex) {
@@ -612,6 +629,7 @@
                     if (src && !preloadedSrcSet.has(src)) {
                         preloadedSrcSet.add(src);
                         const loader = new Image();
+                        loader.decoding = 'async';
                         loader.src = src;
                     }
                 }
@@ -623,25 +641,24 @@
             if (!total || photoIndex < 0 || photoIndex >= total) {
                 slideContainer.classList.add('invisible');
                 imgEl.removeAttribute('src');
+                imgEl.removeAttribute('data-photo-idx');
                 imgEl.alt = '';
                 return;
             }
 
             slideContainer.classList.remove('invisible');
             const photo = displayPhotos[photoIndex];
-            const targetSrc = photo.src;
 
-            // Avoid resetting src if it already matches to prevent any frame flicker
-            if (imgEl.getAttribute('data-photo-idx') === String(photoIndex) && imgEl.getAttribute('src')) {
+            if (imgEl.dataset.photoIdx === String(photoIndex) && imgEl.getAttribute('src')) {
                 return;
             }
 
-            imgEl.setAttribute('data-photo-idx', String(photoIndex));
-            imgEl.onerror = function() {
+            imgEl.dataset.photoIdx = String(photoIndex);
+            imgEl.onerror = function () {
                 this.onerror = null;
                 this.src = createFallbackSVG(photoIndex);
             };
-            imgEl.src = targetSrc;
+            imgEl.src = photo.src;
             imgEl.alt = photo.alt || 'Portfolio Photograph';
         }
 
@@ -673,7 +690,6 @@
             }
         }
 
-        // Immediately settles any in-flight horizontal slide so the next touch/swipe has zero delay
         function commitPendingSlide() {
             if (!isSlideAnimating) return;
             clearSlideTimers();
@@ -686,7 +702,6 @@
             lightboxTrack.style.transition = 'none';
             updateLightboxSlides();
             lightboxTrack.style.transform = 'translate3d(0px, 0px, 0)';
-            void lightboxTrack.offsetWidth;
             isSlideAnimating = false;
         }
 
@@ -702,6 +717,7 @@
 
         function openLightbox(index) {
             currentIndex = index;
+            isLightboxOpen = true;
             resetTrackTransform();
             updateLightboxSlides();
            
@@ -709,15 +725,16 @@
             lightbox.classList.add('opacity-100', 'pointer-events-auto');
             lightbox.setAttribute('aria-hidden', 'false');
 
-            [lightboxTopbar, lightboxCard].forEach(el => {
-                el.classList.remove('pointer-events-none');
-                el.classList.add('pointer-events-auto');
-            });
+            lightboxTopbar.classList.remove('pointer-events-none');
+            lightboxTopbar.classList.add('pointer-events-auto');
+            lightboxCard.classList.remove('pointer-events-none');
+            lightboxCard.classList.add('pointer-events-auto');
 
             document.body.classList.add('modal-open');
         }
 
         function closeLightbox() {
+            isLightboxOpen = false;
             lightbox.classList.remove('opacity-100', 'pointer-events-auto');
             lightbox.classList.add('opacity-0', 'pointer-events-none');
             lightbox.setAttribute('aria-hidden', 'true');
@@ -737,7 +754,6 @@
         function slideToPhoto(direction) {
             if (isClosingVertically || displayPhotos.length <= 1) return;
 
-            // If a slide animation is already running, commit it instantly so rapid swipes/taps never stall
             if (isSlideAnimating) {
                 commitPendingSlide();
             }
@@ -751,8 +767,10 @@
             const width = window.innerWidth;
             const targetX = direction === 'next' ? -width : width;
 
-            lightboxTrack.style.transition = 'transform 220ms cubic-bezier(0.22, 1, 0.36, 1)';
-            lightboxTrack.style.transform = `translate3d(${targetX}px, 0px, 0)`;
+            requestAnimationFrame(() => {
+                lightboxTrack.style.transition = 'transform 220ms cubic-bezier(0.22, 1, 0.36, 1)';
+                lightboxTrack.style.transform = `translate3d(${targetX}px, 0px, 0)`;
+            });
 
             let finished = false;
             const finishSlide = () => {
@@ -768,7 +786,6 @@
                 lightboxTrack.style.transition = 'none';
                 updateLightboxSlides();
                 lightboxTrack.style.transform = 'translate3d(0px, 0px, 0)';
-                void lightboxTrack.offsetWidth;
                 isSlideAnimating = false;
             };
 
@@ -820,12 +837,12 @@
 
         lightbox.addEventListener('click', (e) => {
             if (isClosingVertically) return;
-            const isClickInsideImg = lightboxImg.contains(e.target);
-            const isClickInsidePrev = lightboxPrev.contains(e.target);
-            const isClickInsideNext = lightboxNext.contains(e.target);
-            const isClickInsideClose = lightboxClose.contains(e.target);
-           
-            if (!isClickInsideImg && !isClickInsidePrev && !isClickInsideNext && !isClickInsideClose) {
+            if (
+                !lightboxImg.contains(e.target) &&
+                !lightboxPrev.contains(e.target) &&
+                !lightboxNext.contains(e.target) &&
+                !lightboxClose.contains(e.target)
+            ) {
                 closeLightbox();
             }
         });
@@ -838,14 +855,13 @@
         lightboxPrev.addEventListener('click', prevPhoto);
 
         window.addEventListener('keydown', (e) => {
-            if (lightbox.classList.contains('opacity-100')) {
-                if (e.key === 'Escape') closeLightbox();
-                if (e.key === 'ArrowRight') nextPhoto();
-                if (e.key === 'ArrowLeft') prevPhoto();
-            }
+            if (!isLightboxOpen) return;
+            if (e.key === 'Escape') closeLightbox();
+            else if (e.key === 'ArrowRight') nextPhoto();
+            else if (e.key === 'ArrowLeft') prevPhoto();
         });
 
-        // Mobile Continuous Interactive Touch Drag & Swipe (Zero-delay chaining)
+        // Mobile Continuous Interactive Touch Drag & Swipe (rAF-throttled for 60/120fps smoothness)
         let touchStartX = 0;
         let touchStartY = 0;
         let touchStartTime = 0;
@@ -855,9 +871,42 @@
         let isDraggingSlide = false;
         let isPinchingOrMultiTouch = false;
         let lastMultiTouchEndTime = 0;
+        let touchMoveRafPending = false;
+        let cachedViewportWidth = window.innerWidth;
 
         function getViewportScale() {
             return window.visualViewport ? window.visualViewport.scale : 1;
+        }
+
+        function applyDragTransform() {
+            touchMoveRafPending = false;
+            if (!isDraggingSlide) return;
+
+            if (dragAxis === 'x') {
+                const width = cachedViewportWidth;
+
+                while (currentDeltaX <= -width && currentIndex < displayPhotos.length - 1) {
+                    currentIndex += 1;
+                    touchStartX -= width;
+                    currentDeltaX += width;
+                    updateLightboxSlides();
+                }
+                while (currentDeltaX >= width && currentIndex > 0) {
+                    currentIndex -= 1;
+                    touchStartX += width;
+                    currentDeltaX -= width;
+                    updateLightboxSlides();
+                }
+
+                const atStart = currentIndex === 0 && currentDeltaX > 0;
+                const atEnd = currentIndex === displayPhotos.length - 1 && currentDeltaX < 0;
+                const effectiveX = (atStart || atEnd) ? currentDeltaX * 0.25 : currentDeltaX;
+                lightboxTrack.style.transform = `translate3d(${effectiveX}px, 0px, 0)`;
+            } else if (dragAxis === 'y') {
+                lightboxTrack.style.transform = `translate3d(0px, ${currentDeltaY}px, 0)`;
+                const fadeRatio = Math.max(0, 1 - Math.abs(currentDeltaY) / 140);
+                lightboxTopbar.style.opacity = String(fadeRatio);
+            }
         }
 
         lightbox.addEventListener('touchstart', (e) => {
@@ -872,11 +921,11 @@
             }
 
             if (e.touches.length === 1 && (Date.now() - lastMultiTouchEndTime >= 350)) {
-                // Immediately settle any active slide animation on touch so the user can swipe again without delay
                 if (isSlideAnimating) {
                     commitPendingSlide();
                 }
 
+                cachedViewportWidth = window.innerWidth;
                 touchStartX = e.touches[0].clientX;
                 touchStartY = e.touches[0].clientY;
                 touchStartTime = Date.now();
@@ -908,31 +957,9 @@
                 dragAxis = Math.abs(currentDeltaX) >= Math.abs(currentDeltaY) ? 'x' : 'y';
             }
 
-            if (dragAxis === 'x') {
-                const width = window.innerWidth;
-
-                // Continuous multi-image advance during a single long drag
-                while (currentDeltaX <= -width && currentIndex < displayPhotos.length - 1) {
-                    currentIndex += 1;
-                    touchStartX -= width;
-                    currentDeltaX += width;
-                    updateLightboxSlides();
-                }
-                while (currentDeltaX >= width && currentIndex > 0) {
-                    currentIndex -= 1;
-                    touchStartX += width;
-                    currentDeltaX -= width;
-                    updateLightboxSlides();
-                }
-
-                const atStart = currentIndex === 0 && currentDeltaX > 0;
-                const atEnd = currentIndex === displayPhotos.length - 1 && currentDeltaX < 0;
-                const effectiveX = (atStart || atEnd) ? currentDeltaX * 0.25 : currentDeltaX;
-                lightboxTrack.style.transform = `translate3d(${effectiveX}px, 0px, 0)`;
-            } else if (dragAxis === 'y') {
-                lightboxTrack.style.transform = `translate3d(0px, ${currentDeltaY}px, 0)`;
-                const fadeRatio = Math.max(0, 1 - Math.abs(currentDeltaY) / 140);
-                lightboxTopbar.style.opacity = String(fadeRatio);
+            if (dragAxis && !touchMoveRafPending) {
+                touchMoveRafPending = true;
+                requestAnimationFrame(applyDragTransform);
             }
         }, { passive: true });
 
@@ -964,7 +991,6 @@
 
             const elapsed = Math.max(1, Date.now() - touchStartTime);
             const velocityX = Math.abs(currentDeltaX) / elapsed;
-            // Trigger on either sufficient drag distance OR a quick flick gesture
             const isHorizontalSwipe = Math.abs(currentDeltaX) > 40 || (Math.abs(currentDeltaX) > 18 && velocityX > 0.28);
             const verticalThreshold = 55;
 
@@ -990,9 +1016,12 @@
             dragAxis = null;
         }, { passive: true });
 
-        // Initialize Gallery on Load & Re-layout on Screen Resize
+        // Initialize Gallery on Load & Debounced Resize
         window.addEventListener('DOMContentLoaded', () => renderGallery(true));
-        window.addEventListener('resize', () => renderGallery(false));
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => renderGallery(false), 100);
+        }, { passive: true });
     </script>
 </body>
 </html>
