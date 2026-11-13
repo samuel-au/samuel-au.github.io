@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Samuel Au</title>
+    <title>Samuel A</title>
     <!-- Browser Tab Icon (Favicon) -->
     <link rel="icon" type="image/svg+xml" href="images/d820d9c3-172f-4e38-894d-d45b430bb489-photoaidcom-cropped.jpg">
     <!-- Tailwind CSS CDN -->
@@ -291,6 +291,11 @@
         let currentColCount = 0;
         let layoutFramePending = false;
         let isSlideAnimating = false;
+        let isClosingVertically = false;
+        let pendingSlideTargetIndex = null;
+        let slideFinishTimer = null;
+        let slideTransitionEndHandler = null;
+        const preloadedSrcSet = new Set();
 
         // DOM Elements
         const headlineMenu = document.getElementById('headline-menu');
@@ -599,6 +604,20 @@
             });
         }
 
+        function preloadNeighborImages(centerIndex) {
+            [-2, -1, 1, 2].forEach(offset => {
+                const idx = centerIndex + offset;
+                if (idx >= 0 && idx < displayPhotos.length) {
+                    const src = displayPhotos[idx].src;
+                    if (src && !preloadedSrcSet.has(src)) {
+                        preloadedSrcSet.add(src);
+                        const loader = new Image();
+                        loader.src = src;
+                    }
+                }
+            });
+        }
+
         function assignSlideImage(slideContainer, imgEl, photoIndex) {
             const total = displayPhotos.length;
             if (!total || photoIndex < 0 || photoIndex >= total) {
@@ -610,11 +629,19 @@
 
             slideContainer.classList.remove('invisible');
             const photo = displayPhotos[photoIndex];
+            const targetSrc = photo.src;
+
+            // Avoid resetting src if it already matches to prevent any frame flicker
+            if (imgEl.getAttribute('data-photo-idx') === String(photoIndex) && imgEl.getAttribute('src')) {
+                return;
+            }
+
+            imgEl.setAttribute('data-photo-idx', String(photoIndex));
             imgEl.onerror = function() {
                 this.onerror = null;
                 this.src = createFallbackSVG(photoIndex);
             };
-            imgEl.src = photo.src;
+            imgEl.src = targetSrc;
             imgEl.alt = photo.alt || 'Portfolio Photograph';
         }
 
@@ -631,9 +658,43 @@
 
             lightboxNext.style.visibility = hasNext ? 'visible' : 'hidden';
             lightboxNext.style.pointerEvents = hasNext ? 'auto' : 'none';
+
+            preloadNeighborImages(currentIndex);
+        }
+
+        function clearSlideTimers() {
+            if (slideFinishTimer) {
+                clearTimeout(slideFinishTimer);
+                slideFinishTimer = null;
+            }
+            if (slideTransitionEndHandler) {
+                lightboxTrack.removeEventListener('transitionend', slideTransitionEndHandler);
+                slideTransitionEndHandler = null;
+            }
+        }
+
+        // Immediately settles any in-flight horizontal slide so the next touch/swipe has zero delay
+        function commitPendingSlide() {
+            if (!isSlideAnimating) return;
+            clearSlideTimers();
+
+            if (pendingSlideTargetIndex !== null) {
+                currentIndex = pendingSlideTargetIndex;
+                pendingSlideTargetIndex = null;
+            }
+
+            lightboxTrack.style.transition = 'none';
+            updateLightboxSlides();
+            lightboxTrack.style.transform = 'translate3d(0px, 0px, 0)';
+            void lightboxTrack.offsetWidth;
+            isSlideAnimating = false;
         }
 
         function resetTrackTransform() {
+            clearSlideTimers();
+            pendingSlideTargetIndex = null;
+            isSlideAnimating = false;
+            isClosingVertically = false;
             lightboxTrack.style.transition = 'none';
             lightboxTrack.style.transform = 'translate3d(0px, 0px, 0)';
             lightboxTopbar.style.opacity = '1';
@@ -641,7 +702,6 @@
 
         function openLightbox(index) {
             currentIndex = index;
-            isSlideAnimating = false;
             resetTrackTransform();
             updateLightboxSlides();
            
@@ -671,33 +731,38 @@
             lightboxNext.style.visibility = '';
             document.body.classList.remove('modal-open');
 
-            isSlideAnimating = false;
             resetTrackTransform();
         }
 
         function slideToPhoto(direction) {
-            if (isSlideAnimating || displayPhotos.length <= 1) return;
+            if (isClosingVertically || displayPhotos.length <= 1) return;
+
+            // If a slide animation is already running, commit it instantly so rapid swipes/taps never stall
+            if (isSlideAnimating) {
+                commitPendingSlide();
+            }
+
             if (direction === 'next' && currentIndex >= displayPhotos.length - 1) return;
             if (direction === 'prev' && currentIndex <= 0) return;
 
             isSlideAnimating = true;
+            pendingSlideTargetIndex = direction === 'next' ? currentIndex + 1 : currentIndex - 1;
 
             const width = window.innerWidth;
             const targetX = direction === 'next' ? -width : width;
 
-            lightboxTrack.style.transition = 'transform 300ms cubic-bezier(0.22, 1, 0.36, 1)';
+            lightboxTrack.style.transition = 'transform 220ms cubic-bezier(0.22, 1, 0.36, 1)';
             lightboxTrack.style.transform = `translate3d(${targetX}px, 0px, 0)`;
 
             let finished = false;
             const finishSlide = () => {
                 if (finished) return;
                 finished = true;
-                lightboxTrack.removeEventListener('transitionend', onEnd);
+                clearSlideTimers();
 
-                if (direction === 'next') {
-                    currentIndex += 1;
-                } else {
-                    currentIndex -= 1;
+                if (pendingSlideTargetIndex !== null) {
+                    currentIndex = pendingSlideTargetIndex;
+                    pendingSlideTargetIndex = null;
                 }
 
                 lightboxTrack.style.transition = 'none';
@@ -707,12 +772,12 @@
                 isSlideAnimating = false;
             };
 
-            const onEnd = (e) => {
+            slideTransitionEndHandler = (e) => {
                 if (e.target === lightboxTrack) finishSlide();
             };
 
-            lightboxTrack.addEventListener('transitionend', onEnd);
-            setTimeout(finishSlide, 330);
+            lightboxTrack.addEventListener('transitionend', slideTransitionEndHandler);
+            slideFinishTimer = setTimeout(finishSlide, 240);
         }
 
         function nextPhoto(e) {
@@ -726,34 +791,35 @@
         }
 
         function slideOutVertically(directionY) {
-            if (isSlideAnimating) return;
-            isSlideAnimating = true;
+            if (isClosingVertically) return;
+            if (isSlideAnimating) commitPendingSlide();
+            isClosingVertically = true;
 
             const height = window.innerHeight;
             const exitY = directionY >= 0 ? height : -height;
 
             lightboxTopbar.style.opacity = '0';
-            lightboxTrack.style.transition = 'transform 220ms cubic-bezier(0.22, 1, 0.36, 1)';
+            lightboxTrack.style.transition = 'transform 200ms cubic-bezier(0.22, 1, 0.36, 1)';
             lightboxTrack.style.transform = `translate3d(0px, ${exitY}px, 0)`;
 
             let finished = false;
             const finishExit = () => {
                 if (finished) return;
                 finished = true;
-                lightboxTrack.removeEventListener('transitionend', onEnd);
+                clearSlideTimers();
                 closeLightbox();
             };
 
-            const onEnd = (e) => {
+            slideTransitionEndHandler = (e) => {
                 if (e.target === lightboxTrack) finishExit();
             };
 
-            lightboxTrack.addEventListener('transitionend', onEnd);
-            setTimeout(finishExit, 240);
+            lightboxTrack.addEventListener('transitionend', slideTransitionEndHandler);
+            slideFinishTimer = setTimeout(finishExit, 220);
         }
 
         lightbox.addEventListener('click', (e) => {
-            if (isSlideAnimating) return;
+            if (isClosingVertically) return;
             const isClickInsideImg = lightboxImg.contains(e.target);
             const isClickInsidePrev = lightboxPrev.contains(e.target);
             const isClickInsideNext = lightboxNext.contains(e.target);
@@ -779,9 +845,10 @@
             }
         });
 
-        // Mobile Interactive Touch Drag & Swipe
+        // Mobile Continuous Interactive Touch Drag & Swipe (Zero-delay chaining)
         let touchStartX = 0;
         let touchStartY = 0;
+        let touchStartTime = 0;
         let currentDeltaX = 0;
         let currentDeltaY = 0;
         let dragAxis = null;
@@ -794,7 +861,7 @@
         }
 
         lightbox.addEventListener('touchstart', (e) => {
-            if (isSlideAnimating) return;
+            if (isClosingVertically) return;
 
             if (e.touches.length > 1 || getViewportScale() > 1.02) {
                 isPinchingOrMultiTouch = true;
@@ -805,8 +872,14 @@
             }
 
             if (e.touches.length === 1 && (Date.now() - lastMultiTouchEndTime >= 350)) {
+                // Immediately settle any active slide animation on touch so the user can swipe again without delay
+                if (isSlideAnimating) {
+                    commitPendingSlide();
+                }
+
                 touchStartX = e.touches[0].clientX;
                 touchStartY = e.touches[0].clientY;
+                touchStartTime = Date.now();
                 currentDeltaX = 0;
                 currentDeltaY = 0;
                 dragAxis = null;
@@ -831,11 +904,27 @@
             currentDeltaX = e.touches[0].clientX - touchStartX;
             currentDeltaY = e.touches[0].clientY - touchStartY;
 
-            if (!dragAxis && (Math.abs(currentDeltaX) > 8 || Math.abs(currentDeltaY) > 8)) {
+            if (!dragAxis && (Math.abs(currentDeltaX) > 6 || Math.abs(currentDeltaY) > 6)) {
                 dragAxis = Math.abs(currentDeltaX) >= Math.abs(currentDeltaY) ? 'x' : 'y';
             }
 
             if (dragAxis === 'x') {
+                const width = window.innerWidth;
+
+                // Continuous multi-image advance during a single long drag
+                while (currentDeltaX <= -width && currentIndex < displayPhotos.length - 1) {
+                    currentIndex += 1;
+                    touchStartX -= width;
+                    currentDeltaX += width;
+                    updateLightboxSlides();
+                }
+                while (currentDeltaX >= width && currentIndex > 0) {
+                    currentIndex -= 1;
+                    touchStartX += width;
+                    currentDeltaX -= width;
+                    updateLightboxSlides();
+                }
+
                 const atStart = currentIndex === 0 && currentDeltaX > 0;
                 const atEnd = currentIndex === displayPhotos.length - 1 && currentDeltaX < 0;
                 const effectiveX = (atStart || atEnd) ? currentDeltaX * 0.25 : currentDeltaX;
@@ -873,23 +962,27 @@
             if (!isDraggingSlide) return;
             isDraggingSlide = false;
 
-            const swipeThreshold = 55;
+            const elapsed = Math.max(1, Date.now() - touchStartTime);
+            const velocityX = Math.abs(currentDeltaX) / elapsed;
+            // Trigger on either sufficient drag distance OR a quick flick gesture
+            const isHorizontalSwipe = Math.abs(currentDeltaX) > 40 || (Math.abs(currentDeltaX) > 18 && velocityX > 0.28);
+            const verticalThreshold = 55;
 
             if (dragAxis === 'x') {
-                if (currentDeltaX < -swipeThreshold && currentIndex < displayPhotos.length - 1) {
+                if (isHorizontalSwipe && currentDeltaX < 0 && currentIndex < displayPhotos.length - 1) {
                     slideToPhoto('next');
-                } else if (currentDeltaX > swipeThreshold && currentIndex > 0) {
+                } else if (isHorizontalSwipe && currentDeltaX > 0 && currentIndex > 0) {
                     slideToPhoto('prev');
                 } else {
-                    lightboxTrack.style.transition = 'transform 240ms cubic-bezier(0.22, 1, 0.36, 1)';
+                    lightboxTrack.style.transition = 'transform 180ms cubic-bezier(0.22, 1, 0.36, 1)';
                     lightboxTrack.style.transform = 'translate3d(0px, 0px, 0)';
                 }
             } else if (dragAxis === 'y') {
-                if (Math.abs(currentDeltaY) > swipeThreshold) {
+                if (Math.abs(currentDeltaY) > verticalThreshold) {
                     slideOutVertically(currentDeltaY);
                 } else {
                     lightboxTopbar.style.opacity = '1';
-                    lightboxTrack.style.transition = 'transform 240ms cubic-bezier(0.22, 1, 0.36, 1)';
+                    lightboxTrack.style.transition = 'transform 180ms cubic-bezier(0.22, 1, 0.36, 1)';
                     lightboxTrack.style.transform = 'translate3d(0px, 0px, 0)';
                 }
             }
