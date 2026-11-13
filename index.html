@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Samuel Au</title>
+    <title>Samuel Auo</title>
     <!-- Browser Tab Icon (Favicon) -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2318181b'/%3E%3Ccircle cx='16' cy='16' r='8' fill='none' stroke='%23ffffff' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='2.5' fill='%23ffffff'/%3E%3C/svg%3E">
     <!-- Tailwind CSS CDN -->
@@ -89,7 +89,7 @@
         }
     </style>
 </head>
-<body class="relative min-h-screen bg-[#f9f8f5] font-sans antialiased selection:bg-zinc-200 selection:text-zinc-900 p-4 sm:p-6 lg:p-8">
+<body class="relative min-h-screen bg-[#f9f8f5] font-sans antialiased selection:bg-zinc-200 selection:text-zinc-900 pt-2 pb-4 px-4 sm:pt-3 sm:pb-6 sm:px-6 lg:pt-4 lg:pb-8 lg:px-8">
 
     <!-- Subtle Scanned / 90s Outdoor Print Text & Icon Filter -->
     <svg class="sr-only" width="0" height="0" aria-hidden="true">
@@ -116,10 +116,10 @@
     <div class="paper-grain-bg" aria-hidden="true"></div>
 
     <!-- TOP HEADER WITH RIGHT ALIGNED HEADLINE & REVEALABLE SOCIAL ICONS -->
-    <header class="max-w-[1920px] mx-auto flex justify-end items-center mb-4 sm:mb-6 lg:mb-8">
+    <header class="max-w-[1920px] mx-auto flex justify-end items-center mb-2 sm:mb-3 lg:mb-4">
         <div class="inline-flex items-center gap-3 sm:gap-4">
             <!-- Outer wrapper keeps icons open while moving cursor between Headline and revealed icons -->
-            <div id="headline-menu" class="relative inline-flex items-center py-1 pl-2">
+            <div id="headline-menu" class="relative inline-flex items-center pl-2">
                 
                 <!-- Social Icons Container (Invisible & non-interactive until Headline is hovered or clicked) -->
                 <div id="social-icons" class="flex items-center gap-3.5 pr-4 invisible opacity-0 translate-x-2 pointer-events-none transition-all duration-200 ease-out">
@@ -142,13 +142,13 @@
                 </div>
 
                 <!-- Interactive Headline Trigger -->
-                <button id="headline-trigger" type="button" aria-expanded="false" aria-controls="social-icons" class="textured-ink text-2xl sm:text-3xl font-semibold sm:font-medium tracking-normal font-mono focus:outline-none transition-colors duration-150 cursor-pointer select-none">
+                <button id="headline-trigger" type="button" aria-expanded="false" aria-controls="social-icons" class="textured-ink text-2xl sm:text-3xl font-semibold sm:font-medium tracking-normal font-mono leading-none focus:outline-none transition-colors duration-150 cursor-pointer select-none">
                     Headline
                 </button>
             </div>
 
             <!-- Interactive Cat PNG Image to the right of Headline -->
-            <button id="cat-trigger" type="button" aria-label="Interactive Cat" class="focus:outline-none cursor-pointer select-none flex items-center justify-center">
+            <button id="cat-trigger" type="button" aria-label="Interactive Cat" class="textured-ink focus:outline-none cursor-pointer select-none flex items-center justify-center">
                 <img id="cat-img" src="images/cat1.png" alt="Cat" draggable="false" class="w-16 h-16 sm:w-[72px] sm:h-[72px] object-contain" />
             </button>
         </div>
